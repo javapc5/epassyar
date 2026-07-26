@@ -1,15 +1,16 @@
 // Bagulin Smart Tourism — Prisma schema
-// Local dev uses SQLite for zero-setup running. For production, change the
-// provider to "postgresql" (array fields are stored as JSON strings here so the
-// same shape works on both). See docs/02-database-design.md for the full design.
+// Uses PostgreSQL (Neon free tier) for both local dev and production.
+// Array fields are stored as JSON strings so no native array types are needed.
+// See docs/02-database-design.md for the full design.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Municipality {
