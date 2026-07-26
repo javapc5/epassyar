@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bagulin Tourism — Smart Tourism Reservation System (UI Prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+  :root{
+    --green:#1B5E20; --green-dark:#0e3d12; --green-light:#e8f5e9;
+    --amber:#FFB300; --amber-dark:#e69a00;
+    --blue:#0277BD; --ink:#1d2b20; --muted:#5c6b60;
+    --bg:#FAFAF5; --card:#ffffff; --line:#e3e8e1;
+    --radius:14px; --shadow:0 4px 18px rgba(20,50,25,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  h1,h2,h3,h4,.logo,.price b{font-family:'Bricolage Grotesque','Inter',system-ui,sans-serif}
+  i.ph,i.ph-duotone,i.ph-fill,i.ph-bold{vertical-align:-2px}
+  .wish{position:absolute;bottom:12px;right:12px;width:34px;height:34px;border-radius:50%;background:#fff;border:none;display:flex;align-items:center;justify-content:center;color:var(--green);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.22);font-size:17px}
+  .stars i{color:var(--amber-dark)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  h2{font-size:26px;letter-spacing:-.3px}
+  .sub{color:var(--muted);font-size:14px;margin-top:4px}
+  .sect{padding:44px 0 10px}
+  .sect-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px}
+  .link{color:var(--green);font-weight:600;font-size:14px;text-decoration:none}
+
+  /* ===== TOP BAR ===== */
+  .topbar{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  .topbar .wrap{display:flex;align-items:center;gap:28px;height:64px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;color:var(--green)}
+  .logo-badge{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2e7d32,#1B5E20);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px}
+  .nav{display:flex;gap:22px;font-size:14.5px;color:#38463c;flex:1}
+  .nav a{text-decoration:none;color:inherit;font-weight:500}
+  .nav a.active{color:var(--green);font-weight:700}
+  .btn{border:none;border-radius:10px;padding:11px 20px;font-weight:700;font-size:14px;cursor:pointer}
+  .btn-amber{background:var(--amber);color:#3d2c00}
+  .btn-outline{background:#fff;color:var(--green);border:1.5px solid var(--green)}
+  .btn-green{background:var(--green);color:#fff}
+
+  /* ===== HERO ===== */
+  .hero{position:relative;color:#fff;overflow:hidden}
+  .hero svg.scene{display:block;width:100%;height:430px;object-fit:cover}
+  .hero-inner{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center}
+  .hero h1{font-size:42px;line-height:1.12;letter-spacing:-.5px;max-width:640px;text-shadow:0 2px 14px rgba(0,40,10,.45)}
+  .hero p{margin-top:10px;font-size:17px;max-width:560px;text-shadow:0 1px 8px rgba(0,40,10,.5)}
+  .search{margin-top:26px;background:#fff;border-radius:16px;box-shadow:var(--shadow);display:flex;align-items:stretch;max-width:860px;overflow:hidden}
+  .search .field{flex:1;padding:14px 18px;border-right:1px solid var(--line)}
+  .search .field label{display:block;font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.6px}
+  .search .field span{font-size:15px;color:#333}
+  .search .go{background:var(--amber);color:#3d2c00;font-weight:800;font-size:15px;border:none;padding:0 34px;cursor:pointer}
+  .chips{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+  .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.55);backdrop-filter:blur(3px);color:#fff;padding:7px 16px;border-radius:999px;font-size:13.5px;font-weight:600}
+  .trustbar{background:var(--green-dark);color:#cfe6cf;font-size:13.5px}
+  .trustbar .wrap{display:flex;gap:34px;padding:12px 24px;flex-wrap:wrap}
+  .trustbar b{color:#fff}
+
+  /* ===== CARDS (packages) ===== */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+  .card .img{position:relative;height:170px}
+  .card .img svg{width:100%;height:100%;display:block}
+  .badge{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
+  .badge.slots{left:auto;right:12px;background:var(--amber);color:#3d2c00}
+  .card .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .card h3{font-size:17px;line-height:1.25}
+  .stops{font-size:13px;color:var(--muted)}
+  .stars{color:var(--amber-dark);font-size:13.5px;font-weight:700}
+  .stars .n{color:var(--muted);font-weight:500}
+  .inc{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+  .inc span{background:var(--green-light);color:var(--green);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .pricebar{margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;padding-top:12px;border-top:1px dashed var(--line)}
+  .price small{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+  .price b{font-size:21px;color:var(--green)}
+  .price b em{font-style:normal;font-size:12px;color:var(--muted);font-weight:600}
+
+  /* ===== DESTINATION GRID ===== */
+  .dgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .dcard{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .dcard .img{position:relative;height:118px}
+  .dcard .img svg{width:100%;height:100%;display:block}
+  .dcard .cat{position:absolute;bottom:10px;left:10px;background:rgba(255,255,255,.92);color:var(--green);font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px}
+  .dcard .body{padding:12px 14px 14px}
+  .dcard h4{font-size:14.5px;line-height:1.25}
+  .dcard .brgy{font-size:12px;color:var(--muted);margin:2px 0 6px}
+  .acts{display:flex;gap:5px;flex-wrap:wrap}
+  .acts span{font-size:10.5px;background:#f0f4ef;color:#41564a;padding:2px 8px;border-radius:999px;font-weight:600}
+  .gr{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;background:#fff3d6;color:#8a6100;padding:2px 8px;border-radius:999px;font-weight:700}
+
+  /* ===== ITINERARY BUILDER ===== */
+  .builder{background:linear-gradient(135deg,#0e3d12,#1B5E20 55%,#2e7d32);border-radius:20px;color:#fff;padding:34px;display:grid;grid-template-columns:1.15fr 1fr;gap:34px;box-shadow:var(--shadow)}
+  .builder h2{color:#fff}
+  .builder .sub{color:#bcd9bd}
+  .steps{margin-top:20px;display:flex;flex-direction:column;gap:14px}
+  .step{display:flex;gap:14px;align-items:flex-start}
+  .step .num{width:30px;height:30px;border-radius:50%;background:var(--amber);color:#3d2c00;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .step b{display:block;font-size:15px}
+  .step span{font-size:13px;color:#c9e2ca}
+  .quote{background:#fff;color:var(--ink);border-radius:16px;padding:20px 22px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  .quote h4{font-size:14px;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .qmeta{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+  .qrow{display:flex;justify-content:space-between;font-size:13.5px;padding:5.5px 0;border-bottom:1px dashed var(--line)}
+  .qrow.total{border-bottom:none;border-top:2px solid var(--green);margin-top:6px;padding-top:10px;font-weight:800;font-size:15px}
+  .qrow.due{color:var(--green);font-weight:800;border:none;padding:3px 0}
+  .qrow.bal{color:var(--muted);border:none;padding:2px 0;font-size:12.5px}
+  .quote .btn{width:100%;margin-top:14px}
+  .qnote{font-size:11px;color:var(--muted);text-align:center;margin-top:8px}
+
+  /* ===== GUIDES ===== */
+  .ggrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .gcard{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;text-align:center}
+  .avatar{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#fff}
+  .gcard h4{font-size:14.5px}
+  .gcard .brgy{font-size:12px;color:var(--muted)}
+  .gcard .spec{font-size:11px;background:var(--green-light);color:var(--green);font-weight:700;border-radius:999px;padding:3px 10px;display:inline-block;margin-top:7px}
+  .gcard .stars{margin-top:7px;display:block}
+  .avail{margin-top:8px;font-size:11px;font-weight:700;color:#1b7d2c}
+  .avail::before{content:"●";margin-right:4px}
+
+  /* ===== PRODUCTS ===== */
+  .pstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .pcard{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .pcard .img{height:96px}
+  .pcard .img svg{width:100%;height:100%;display:block}
+  .pcard .body{padding:12px 14px}
+  .pcard h4{font-size:13.5px}
+  .pcard span{font-size:11.5px;color:var(--muted)}
+
+  /* ===== FOOTER ===== */
+  footer{background:var(--green-dark);color:#bcd9bd;margin-top:52px}
+  footer .wrap{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;padding:38px 24px}
+  footer h5{color:#fff;font-size:14px;margin-bottom:10px}
+  footer a{display:block;color:#bcd9bd;font-size:13px;text-decoration:none;margin-bottom:6px}
+  .foot-note{border-top:1px solid rgba(255,255,255,.15);text-align:center;font-size:12px;padding:14px;color:#9dbf9e}
+  .proto-tag{position:fixed;bottom:14px;right:14px;background:#111;color:#ffd15e;font-size:11px;font-weight:800;letter-spacing:.8px;padding:6px 12px;border-radius:999px;opacity:.85;z-index:99}
+
+  @media (max-width:900px){
+    .cards,.dgrid,.ggrid,.pstrip{grid-template-columns:repeat(2,1fr)}
+    .builder{grid-template-columns:1fr}
+    .hero h1{font-size:30px}
+    .nav{display:none}
+    footer .wrap{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:520px){
+    .wrap{padding:0 14px}
+    .cards,.dgrid,.ggrid,.pstrip{grid-template-columns:1fr}
+    .topbar .wrap{gap:10px}
+    .topbar .btn{padding:9px 12px;font-size:12.5px}
+    .hero svg.scene{height:560px}
+    .hero h1{font-size:26px}
+    .hero p{font-size:14px}
+    .search{flex-direction:column;border-radius:14px}
+    .search .field{border-right:none;border-bottom:1px solid var(--line);padding:11px 16px}
+    .search .go{padding:14px;width:100%}
+    .trustbar .wrap{flex-direction:column;gap:6px}
+    .builder{padding:22px 18px}
+    .quote{padding:16px}
+    .sect-head{flex-direction:column;align-items:flex-start;gap:6px}
+  }
+</style>
+</head>
+<body>
+
+<div class="proto-tag">UI PROTOTYPE</div>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <div class="wrap">
+    <div class="logo"><div class="logo-badge"><i class="ph-duotone ph-mountains"></i></div>Bagulin<span style="font-weight:500;color:#5c6b60">Tourism</span></div>
+    <nav class="nav">
+      <a class="active" href="#">Destinations</a>
+      <a href="#">Tour Packages</a>
+      <a href="#">Build Itinerary</a>
+      <a href="#">Tour Guides</a>
+      <a href="#">Local Products</a>
+      <a href="#">Where to Stay</a>
+    </nav>
+    <button class="btn btn-outline">My Booking</button>
+    <button class="btn btn-amber">Reserve Now</button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <svg class="scene" viewBox="0 0 1440 430" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#8fd3f4"/><stop offset=".55" stop-color="#cdeee0"/><stop offset="1" stop-color="#eaf6e2"/>
+      </linearGradient>
+      <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b7a44"/><stop offset="1" stop-color="#1B5E20"/></linearGradient>
+      <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#57945d"/><stop offset="1" stop-color="#2e6b35"/></linearGradient>
+      <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fb383"/><stop offset="1" stop-color="#4c8352"/></linearGradient>
+    </defs>
+    <rect width="1440" height="430" fill="url(#sky)"/>
+    <circle cx="1180" cy="86" r="46" fill="#fff4c2" opacity=".9"/>
+    <path d="M0,300 L200,170 L370,260 L520,150 L700,280 L900,140 L1080,250 L1260,160 L1440,270 L1440,430 L0,430 Z" fill="url(#m3)" opacity=".8"/>
+    <path d="M0,330 L160,220 L340,300 L560,190 L760,310 L980,200 L1200,300 L1440,220 L1440,430 L0,430 Z" fill="url(#m2)"/>
+    <path d="M0,380 L240,280 L460,360 L720,260 L950,370 L1180,280 L1440,360 L1440,430 L0,430 Z" fill="url(#m1)"/>
+    <path d="M690,265 q6,60 -12,110 q28,-16 34,-58 q10,42 26,58 q-14,-56 -8,-110 Z" fill="#dff3ff" opacity=".85"/>
+    <rect y="330" width="1440" height="100" fill="rgba(10,40,15,.28)"/>
+  </svg>
+  <div class="hero-inner">
+    <div class="wrap">
+      <h1>Discover the Highlands of&nbsp;La&nbsp;Union</h1>
+      <p>Waterfalls, heritage caves, hanging bridges and pine-cooled viewdecks — guided by Bagulin's own accredited community tour guides.</p>
+      <div class="search">
+        <div class="field"><label>Destination</label><span>Anywhere in Bagulin ▾</span></div>
+        <div class="field"><label>Visit date</label><span>Sat, Jul 18 2026 ▾</span></div>
+        <div class="field"><label>Travelers</label><span>2 adults · 1 child ▾</span></div>
+        <button class="go"><i class="ph-bold ph-magnifying-glass"></i> Search</button>
+      </div>
+      <div class="chips">
+        <span class="chip"><i class="ph-duotone ph-waves"></i> Waterfalls</span><span class="chip"><i class="ph-duotone ph-bank"></i> Heritage</span>
+        <span class="chip"><i class="ph-duotone ph-binoculars"></i> Viewpoints</span><span class="chip"><i class="ph-duotone ph-person-simple-hike"></i> Adventure</span><span class="chip"><i class="ph-duotone ph-tree"></i> Parks</span>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="trustbar">
+  <div class="wrap">
+    <span><i class="ph-fill ph-seal-check"></i> <b>Official LGU Bagulin</b> reservation system</span>
+    <span><i class="ph-duotone ph-user-circle-check"></i> <b>22 accredited</b> community tour guides</span>
+    <span><i class="ph-duotone ph-device-mobile"></i> Pay via <b>GCash · Maya · Card</b> or at the Treasurer's Office</span>
+    <span><i class="ph-duotone ph-qr-code"></i> <b>QR tourist pass</b> sent by SMS</span>
+  </div>
+</div>
+
+<!-- ============ PACKAGES ============ -->
+<section class="sect">
+  <div class="wrap">
+    <div class="sect-head">
+      <div><h2>Official Tour Packages</h2><div class="sub">Pre-planned by the Municipal Tourism Office — guide, fees & insurance included</div></div>
+      <a class="link" href="#">View all packages →</a>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="img">
+          <svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMid slice">
+            <defs><linearGradient id="p1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd8e8"/><stop offset="1" stop-color="#2b7a4b"/></linearGradient></defs>
+            <rect width="400" height="170" fill="url(#p1)"/>
+            <path d="M0,120 L90,60 L170,110 L260,50 L340,105 L400,70 L400,170 L0,170Z" fill="#1c5a2e"/>
+            <path d="M190,55 q4,45 -8,80 q18,-10 22,-42 q7,30 18,42 q-10,-40 -6,-80Z" fill="#eaf9ff"/>
+          </svg>
+          <span class="badge">Full day · 8 hrs</span><span class="badge slots">8 slots left</span><button class="wish"><i class="ph ph-heart"></i></button>
+        </div>
+        <div class="body">
+          <h3>Falls Hopping Adventure</h3>
+          <div class="stops">Tiluniang Falls → Loslosi Falls → Bulalakaw Falls</div>
+          <div class="stars"><i class="ph-fill ph-star"></i> 4.8 <span class="n">(46 reviews)</span></div>
+          <div class="inc"><span>Tour guide</span><span>Entrance fees</span><span>Insurance</span><span>Habal-habal</span></div>
+          <div class="pricebar">
+            <div class="price"><small>From</small><b>₱1,250 <em>/ person</em></b></div>
+            <button class="btn btn-green">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img">
+          <svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMid slice">
+            <defs><linearGradient id="p2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7d9a0"/><stop offset="1" stop-color="#7a5a2b"/></linearGradient></defs>
+            <rect width="400" height="170" fill="url(#p2)"/>
+            <ellipse cx="200" cy="150" rx="180" ry="60" fill="#4d3a1c"/>
+            <path d="M120,150 Q200,40 280,150 Z" fill="#2e2210"/>
+            <path d="M150,150 Q200,75 250,150 Z" fill="#120d05"/>
+          </svg>
+          <span class="badge">Half day · 4 hrs</span><span class="badge slots">12 slots left</span><button class="wish"><i class="ph-fill ph-heart" style="color:#c62828"></i></button>
+        </div>
+        <div class="body">
+          <h3>Heritage & Highlands Tour</h3>
+          <div class="stops">Kudlap Burial Cave → Kudlap Viewdeck → Kudal People's Park</div>
+          <div class="stars"><i class="ph-fill ph-star"></i> 4.9 <span class="n">(31 reviews)</span></div>
+          <div class="inc"><span>Heritage guide</span><span>Entrance fees</span><span>Insurance</span></div>
+          <div class="pricebar">
+            <div class="price"><small>From</small><b>₱950 <em>/ person</em></b></div>
+            <button class="btn btn-green">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img">
+          <svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMid slice">
+            <defs><linearGradient id="p3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8d8b0"/><stop offset="1" stop-color="#155a2e"/></linearGradient></defs>
+            <rect width="400" height="170" fill="url(#p3)"/>
+            <path d="M0,140 L400,100" stroke="#5a4632" stroke-width="7" fill="none"/>
+            <path d="M0,140 L400,100" stroke="#8a6f52" stroke-width="2" fill="none" stroke-dasharray="6 8"/>
+            <path d="M40,136 L40,170 M120,128 L120,170 M200,120 L200,170 M280,112 L280,170 M360,104 L360,170" stroke="#5a4632" stroke-width="3"/>
+            <path d="M0,158 Q100,150 200,160 T400,150 L400,170 L0,170Z" fill="#2c76a8"/>
+          </svg>
+          <span class="badge">Adventure · 6 hrs</span><span class="badge slots">6 slots left</span><button class="wish"><i class="ph ph-heart"></i></button>
+        </div>
+        <div class="body">
+          <h3>Bridge & Rappel Extreme</h3>
+          <div class="stops">Picao Hanging Footbridge → Kapandagan Falls (rappelling)</div>
+          <div class="stars"><i class="ph-fill ph-star"></i> 4.7 <span class="n">(22 reviews)</span></div>
+          <div class="inc"><span>Rappel-certified guide</span><span>Gear</span><span>Insurance</span><span>Entrance fees</span></div>
+          <div class="pricebar">
+            <div class="price"><small>From</small><b>₱1,600 <em>/ person</em></b></div>
+            <button class="btn btn-green">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ ITINERARY BUILDER ============ -->
+<section class="sect">
+  <div class="wrap">
+    <div class="builder">
+      <div>
+        <h2>Or build your own itinerary</h2>
+        <div class="sub">Pick your destinations — we compute every fee before you reserve. No surprises.</div>
+        <div class="steps">
+          <div class="step"><div class="num">1</div><div><b>Choose destinations & date</b><span>Live capacity check on every site — eco-limits protected</span></div></div>
+          <div class="step"><div class="num">2</div><div><b>See the full cost breakdown</b><span>Entrance, environmental, guide, transport & insurance fees — itemized</span></div></div>
+          <div class="step"><div class="num">3</div><div><b>Pay the reservation fee</b><span>GCash, Maya, card — or at the Municipal Treasurer's Office</span></div></div>
+          <div class="step"><div class="num">4</div><div><b>Get your QR tourist pass by SMS</b><span>Your accredited guide is assigned & notified automatically</span></div></div>
+        </div>
+      </div>
+      <div class="quote">
+        <h4><i class="ph-duotone ph-receipt"></i> Your itinerary quote</h4>
+        <div class="qmeta">Sat, Jul 18 · 2 adults, 1 child · Kudlap Viewdeck + Bulalakaw Falls</div>
+        <div class="qrow"><span>Entrance fees (2 sites × 3 pax)</span><b>₱180</b></div>
+        <div class="qrow"><span>Environmental fee (₱30 × 3)</span><b>₱90</b></div>
+        <div class="qrow"><span>Tour guide (1 guide × 1 day)</span><b>₱600</b></div>
+        <div class="qrow"><span>Transport — habal-habal (₱50 × 3)</span><b>₱150</b></div>
+        <div class="qrow"><span>Tourist insurance (₱25 × 3)</span><b>₱75</b></div>
+        <div class="qrow total"><span>Total</span><span>₱1,095</span></div>
+        <div class="qrow due"><span>Reserve now (20%)</span><span>₱219</span></div>
+        <div class="qrow bal"><span>Remaining balance — pay on arrival</span><span>₱876</span></div>
+        <button class="btn btn-amber">Reserve this itinerary — ₱219</button>
+        <div class="qnote">Unpaid reservations expire automatically after 24 hours.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DESTINATIONS ============ -->
+<section class="sect">
+  <div class="wrap">
+    <div class="sect-head">
+      <div><h2>Officially Declared Tourist Destinations</h2><div class="sub">8 sites across 6 barangays — each with live daily capacity</div></div>
+      <a class="link" href="#">Explore all →</a>
+    </div>
+    <div class="dgrid">
+
+      <div class="dcard">
+        <div class="img">
+          <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid slice"><rect width="300" height="118" fill="#c9a86a"/><ellipse cx="150" cy="110" rx="150" ry="40" fill="#7a5a2b"/><path d="M95,110 Q150,30 205,110Z" fill="#3d2c12"/><path d="M120,110 Q150,60 180,110Z" fill="#140d04"/></svg>
+          <span class="cat">Heritage Cave</span>
+        </div>
+        <div class="body"><h4>Kudlap Burial Cave</h4><div class="brgy"><i class="ph ph-map-pin"></i> Brgy. Cambaly · National Cultural Treasure</div>
+        <div class="acts"><span>Cultural tour</span><span>History</span><span class="gr"><i class="ph-fill ph-person-simple-hike"></i> Guide required</span></div></div>
+      </div>
+
+      <div class="dcard">
+        <div class="img">
+          <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid slice"><rect width="300" height="118" fill="#b7dff0"/><path d="M0,90 L70,45 L140,80 L210,40 L300,85 L300,118 L0,118Z" fill="#2e6b35"/><path d="M60,60 l8,-22 l8,22Z M90,66 l7,-20 l7,20Z M230,58 l8,-22 l8,22Z" fill="#155a2e"/></svg>
+          <span class="cat">Park · Viewpoint</span>
+        </div>
+        <div class="body"><h4>Kudal People's Park</h4><div class="brgy"><i class="ph ph-map-pin"></i> Brgy. Tagudtud · "Little Baguio" of Bagulin</div>
+        <div class="acts"><span>Sightseeing</span><span>Photography</span><span>Relaxation</span></div></div>
+      </div>
+
+      <div class="dcard">
+        <div class="img">
+          <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid slice"><rect width="300" height="118" fill="#8fc8a0"/><path d="M0,70 L300,55 L300,118 L0,118Z" fill="#2b6d3c"/><path d="M140,40 q4,40 -8,70 q16,-8 20,-36 q6,26 16,36 q-9,-34 -5,-70Z" fill="#e8f8ff"/><ellipse cx="150" cy="112" rx="70" ry="12" fill="#5db4d8"/></svg>
+          <span class="cat">Waterfall</span>
+        </div>
+        <div class="body"><h4>Tiluniang Falls</h4><div class="brgy"><i class="ph ph-map-pin"></i> Brgy. Cardiz</div>
+        <div class="acts"><span>Swimming</span><span>Picnic</span><span class="gr"><i class="ph-fill ph-person-simple-hike"></i> Guide required</span></div></div>
+      </div>
+
+      <div class="dcard">
+        <div class="img">
+          <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid slice"><rect width="300" height="118" fill="#a8d4b8"/><path d="M0,86 L300,62" stroke="#5a4632" stroke-width="6" fill="none"/><path d="M30,84 V118 M100,78 V118 M170,72 V118 M240,66 V118" stroke="#5a4632" stroke-width="3"/><path d="M0,104 Q80,98 160,105 T300,98 L300,118 L0,118Z" fill="#2c76a8"/></svg>
+          <span class="cat">Landmark</span>
+        </div>
+        <div class="body"><h4>Picao Hanging Footbridge</h4><div class="brgy"><i class="ph ph-map-pin"></i> Brgy. Suyo · Longest in La Union — 211.30 m</div>
+        <div class="acts"><span>Walking tour</span><span>Photography</span></div></div>
+      </div>
+
+      <div class="dcard">
+        <div class="img">
+          <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid slice"><rect width="300" height="118" fill="#79bd8e"/><path d="M0,60 L300,48 L300,118 L0,118Z" fill="#20603a"/><path d="M120,30 q3,30 -6,52 q12,-6 15,-26 q5,18 12,26 q-7,-25 -4,-52Z" fill="#e8f8ff"/><path d="M175,45 q3,26 -5,45 q10,-5 13,-22 q4,16 10,22 q-6,-22 -3,-45Z" fill="#e8f8ff"/><ellipse cx="150" cy="112" rx="80" ry="11" fill="#4ea8cf"/></svg>
+          <span class="cat">Waterfall</span>
+        </div>
+        <div class="body"><h4>Loslosi Falls</h4><div class="brgy"><i class="ph ph-map-pin"></i> Brgy. Suyo · Multiple cascades</div>
+        <div class="acts"><span>Swimming</span><span>Picnic</span><span class="gr"><i class="ph-fill ph-person-simple-hike"></i> Guide required</span></div></div>
+      </div>
+
+      <div class="dcard">
+        <div class="img">
+          <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid slice"><rect width="300" height="118" fill="#8ecfa4"/><path d="M0,75 L90,35 L180,70 L300,40 L300,118 L0,118Z" fill="#1d5c33"/><path d="M150,42 q4,38 -8,64 q15,-8 19,-32 q6,24 15,32 q-8,-30 -5,-64Z" fill="#eefaff"/></svg>
+          <span class="cat">Waterfall · Trek</span>
+        </div>
+        <div class="body"><h4>Bulalakaw Falls</h4><div class="brgy"><i class="ph ph-map-pin"></i> Brgy. Alibangsay · 15–20 min trek</div>
+        <div class="acts"><span>Trekking</span><span>Swimming</span><span class="gr"><i class="ph-fill ph-person-simple-hike"></i> Guide required</span></div></div>
+      </div>
+
+      <div class="dcard">
+        <div class="img">
+          <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid slice"><rect width="300" height="118" fill="#ffd9a0"/><circle cx="240" cy="30" r="18" fill="#fff2c8"/><path d="M0,80 L80,45 L160,75 L240,40 L300,70 L300,118 L0,118Z" fill="#8a5a2b"/><path d="M0,95 L100,70 L200,95 L300,78 L300,118 L0,118Z" fill="#1d5c33"/><path d="M20,95 h40 M70,88 h40 M130,95 h40" stroke="#3f7d4e" stroke-width="4"/></svg>
+          <span class="cat">Viewpoint</span>
+        </div>
+        <div class="body"><h4>Kudlap Viewdeck</h4><div class="brgy"><i class="ph ph-map-pin"></i> Brgy. Cambaly · Rice terraces & tiger-grass farms</div>
+        <div class="acts"><span>Viewing</span><span>Photography</span></div></div>
+      </div>
+
+      <div class="dcard">
+        <div class="img">
+          <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid slice"><rect width="300" height="118" fill="#6db184"/><path d="M0,50 L300,38 L300,118 L0,118Z" fill="#174a2c"/><path d="M148,22 q5,45 -10,74 q18,-9 23,-38 q7,28 18,38 q-10,-35 -6,-74Z" fill="#eafaff"/><path d="M148,30 L142,95" stroke="#ffb300" stroke-width="2.5" stroke-dasharray="4 4"/><circle cx="142" cy="95" r="4" fill="#ffb300"/><ellipse cx="150" cy="112" rx="75" ry="10" fill="#3f9cc4"/></svg>
+          <span class="cat">Adventure</span>
+        </div>
+        <div class="body"><h4>Kapandagan Falls</h4><div class="brgy"><i class="ph ph-map-pin"></i> Brgy. Cardiz · 40 min trek + rappelling</div>
+        <div class="acts"><span>Rappelling</span><span>Trekking</span><span class="gr"><i class="ph-fill ph-person-simple-hike"></i> Guide required</span></div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ GUIDES ============ -->
+<section class="sect">
+  <div class="wrap">
+    <div class="sect-head">
+      <div><h2>Meet Your Accredited Community Guides</h2><div class="sub">22 trained locals from 6 barangays — assigned to every booking, notified by SMS</div></div>
+      <a class="link" href="#">All 22 guides →</a>
+    </div>
+    <div class="ggrid">
+      <div class="gcard"><div class="avatar" style="background:#2e7d32">DP</div><h4>Danilo Pulmano</h4><div class="brgy">Brgy. Alibangsay</div><span class="spec">Waterfall treks</span><span class="stars"><i class="ph-fill ph-star"></i> 4.9</span><div class="avail">Available Jul 18</div></div>
+      <div class="gcard"><div class="avatar" style="background:#0277BD">JT</div><h4>Jerald Tuaban</h4><div class="brgy">Brgy. Cardiz</div><span class="spec">Rappelling · First aid</span><span class="stars"><i class="ph-fill ph-star"></i> 4.8</span><div class="avail">Available Jul 18</div></div>
+      <div class="gcard"><div class="avatar" style="background:#8a6100">HV</div><h4>Hazel B. Villano</h4><div class="brgy">Brgy. Cambaly</div><span class="spec">Heritage & cave tours</span><span class="stars"><i class="ph-fill ph-star"></i> 4.9</span><div class="avail">Available Jul 19</div></div>
+      <div class="gcard"><div class="avatar" style="background:#6a1b9a">VD</div><h4>Venus A. Dangpilen</h4><div class="brgy">Brgy. Suyo</div><span class="spec">River & bridge tours</span><span class="stars"><i class="ph-fill ph-star"></i> 4.7</span><div class="avail">Available Jul 18</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRODUCTS ============ -->
+<section class="sect">
+  <div class="wrap">
+    <div class="sect-head">
+      <div><h2>Take Home a Piece of Bagulin</h2><div class="sub">Local products by Bagulin farmers & cooperatives — available at the Pasalubong Center</div></div>
+    </div>
+    <div class="pstrip">
+      <div class="pcard"><div class="img"><svg viewBox="0 0 300 96" preserveAspectRatio="xMidYMid slice"><rect width="300" height="96" fill="#e8dcc0"/><path d="M140,10 L160,10 L166,50 L134,50Z" fill="#8a5a2b"/><path d="M120,50 h60 l10,36 h-80Z" fill="#d4a94e"/><path d="M125,56 v26 M135,56 v28 M145,56 v29 M155,56 v29 M165,56 v28 M175,56 v26" stroke="#a87f2e" stroke-width="2"/></svg></div><div class="body"><h4>Quality Softbrooms</h4><span>Handcrafted by local farmers</span></div></div>
+      <div class="pcard"><div class="img"><svg viewBox="0 0 300 96" preserveAspectRatio="xMidYMid slice"><rect width="300" height="96" fill="#f3e0e6"/><path d="M143,12 h14 v18 q10,6 10,20 v34 h-34 v-34 q0,-14 10,-20Z" fill="#7b1f3f"/><rect x="139" y="52" width="22" height="16" rx="2" fill="#f7ecd8"/></svg></div><div class="body"><h4>Bugnay Wine</h4><span>From locally harvested bugnay berries</span></div></div>
+      <div class="pcard"><div class="img"><svg viewBox="0 0 300 96" preserveAspectRatio="xMidYMid slice"><rect width="300" height="96" fill="#fdf3d9"/><circle cx="150" cy="52" r="26" fill="#e0a62e"/><circle cx="150" cy="52" r="17" fill="#c98a1b"/><path d="M118,30 q10,-14 26,-10" stroke="#4a7d3a" stroke-width="4" fill="none"/></svg></div><div class="body"><h4>Organic Turmeric-Ginger Tea</h4><span>Bagulin Multi-Purpose Cooperative</span></div></div>
+      <div class="pcard"><div class="img"><svg viewBox="0 0 300 96" preserveAspectRatio="xMidYMid slice"><rect width="300" height="96" fill="#ece4f4"/><path d="M143,12 h14 v18 q10,6 10,20 v34 h-34 v-34 q0,-14 10,-20Z" fill="#5b2a86"/><rect x="139" y="52" width="22" height="16" rx="2" fill="#f7ecd8"/></svg></div><div class="body"><h4>Ube Wine</h4><span>Supporting local ube farmers</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div>
+      <h5><i class="ph-duotone ph-mountains"></i> Bagulin Tourism</h5>
+      <p style="font-size:13px;max-width:300px">Official Smart Tourism Reservation System of the Municipality of Bagulin, La Union — Highlands of La Union.</p>
+    </div>
+    <div><h5>Plan</h5><a href="#">Destinations</a><a href="#">Tour Packages</a><a href="#">Build Itinerary</a><a href="#">Where to Stay</a></div>
+    <div><h5>Community</h5><a href="#">Tour Guides</a><a href="#">Local Products</a><a href="#">Travel Advisories</a></div>
+    <div><h5>Office</h5><a href="#">Municipal Tourism Office</a><a href="#">Treasurer's Office payments</a><a href="#">Contact & directions</a></div>
+  </div>
+  <div class="foot-note">UI Prototype · LGU Bagulin, La Union · Accommodations are recommendations only — contact hosts directly.</div>
+</footer>
+
+</body>
+</html>

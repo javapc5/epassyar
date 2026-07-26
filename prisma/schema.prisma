@@ -1,0 +1,387 @@
+// Bagulin Smart Tourism — Prisma schema
+// Local dev uses SQLite for zero-setup running. For production, change the
+// provider to "postgresql" (array fields are stored as JSON strings here so the
+// same shape works on both). See docs/02-database-design.md for the full design.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Municipality {
+  id                      Int      @id @default(autoincrement())
+  name                    String
+  province                String
+  tagline                 String?
+  logoUrl                 String?
+  heroImageUrl            String?
+  themeColor              String   @default("#1B5E20")
+  contactNumber           String?
+  email                   String?
+  address                 String?
+  onlinePaymentEnabled    Boolean  @default(true)
+  treasurerPaymentEnabled Boolean  @default(true)
+  reservationExpiryHours  Int      @default(24)
+  heroIntervalMs          Int      @default(5000) // how long each banner slide is shown
+  heroTransition          String   @default("fade") // fade | slide | zoom
+  heroTransitionMs        Int      @default(700) // cross-fade / slide speed
+  heroCaptionsEnabled     Boolean  @default(true) // show per-slide captions on the banner
+  gcashName               String?  // account holder shown to tourists
+  gcashNumber             String?  // 09xx number tourists send to
+  gcashQrUrl              String?  // uploaded QR image (/uploads/...)
+  status                  String   @default("active")
+  createdAt               DateTime @default(now())
+
+  destinations   Destination[]
+  guides         TourGuide[]
+  packages       TourPackage[]
+  users          User[]
+  feeSettings    FeeSetting[]
+  bookings       Booking[]
+  products       LocalProduct[]
+  accommodations Accommodation[]
+  transportRoutes TransportRoute[]
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  municipalityId Int
+  fullName       String
+  email          String?  @unique
+  mobile         String?
+  passwordHash   String
+  role           String // SUPER_ADMIN | TOURISM_ADMIN | STAFF | GUIDE
+  guideId        Int?
+  status         String   @default("active")
+  createdAt      DateTime @default(now())
+
+  municipality Municipality @relation(fields: [municipalityId], references: [id])
+}
+
+model Destination {
+  id               Int      @id @default(autoincrement())
+  municipalityId   Int
+  name             String
+  barangay         String
+  category         String
+  description      String?
+  activities       String   @default("[]") // JSON array of strings
+  trekkingDuration String?
+  difficulty       String   @default("easy") // easy | moderate | challenging
+  guideRequired    Boolean  @default(false)
+  entranceFee      Float    @default(0)
+  environmentalFee Float    @default(0)
+  dailyCapacity    Int      @default(50)
+  openTime         String   @default("07:00")
+  closeTime        String   @default("17:00")
+  latitude         Float?
+  longitude        Float?
+  mainImage        String?
+  whatToBring      String?
+  safetyNotes      String?
+  status           String   @default("active")
+  createdAt        DateTime @default(now())
+
+  municipality        Municipality         @relation(fields: [municipalityId], references: [id])
+  packageDestinations PackageDestination[]
+  bookingDestinations BookingDestination[]
+  closures            DestinationClosure[]
+}
+
+model DestinationClosure {
+  id            Int      @id @default(autoincrement())
+  destinationId Int
+  closureDate   DateTime
+  reason        String?
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+}
+
+model TourGuide {
+  id              Int      @id @default(autoincrement())
+  municipalityId  Int
+  fullName        String
+  barangay        String
+  mobile          String?
+  photoUrl        String?
+  bio             String?
+  yearsExperience Int      @default(0)
+  specialties     String   @default("[]") // JSON array
+  dailyRate       Float    @default(500)
+  maxGroupSize    Int      @default(10)
+  ratingAvg       Float    @default(0)
+  ratingCount     Int      @default(0)
+  accreditationNo String?
+  status          String   @default("active")
+  createdAt       DateTime @default(now())
+
+  municipality   Municipality      @relation(fields: [municipalityId], references: [id])
+  availability   GuideAvailability[]
+  assignments    GuideAssignment[]
+  certifications GuideCertification[]
+}
+
+model GuideCertification {
+  id         Int       @id @default(autoincrement())
+  guideId    Int
+  title      String
+  issuer     String?
+  issuedDate DateTime?
+  expiryDate DateTime?
+
+  guide TourGuide @relation(fields: [guideId], references: [id], onDelete: Cascade)
+}
+
+model GuideAvailability {
+  id      Int      @id @default(autoincrement())
+  guideId Int
+  date    DateTime
+  status  String   @default("available") // available | unavailable
+  note    String?
+
+  guide TourGuide @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@unique([guideId, date])
+}
+
+model TourPackage {
+  id             Int      @id @default(autoincrement())
+  municipalityId Int
+  name           String
+  slug           String   @unique
+  description    String?
+  durationDays   Int      @default(1)
+  durationLabel  String?
+  pricePerPax    Float
+  minPax         Int      @default(1)
+  maxPax         Int
+  mainImage      String?
+  itineraryNotes String?
+  inclusions     String   @default("[]") // JSON array of {label, included}
+  status         String   @default("active")
+  createdAt      DateTime @default(now())
+
+  municipality Municipality         @relation(fields: [municipalityId], references: [id])
+  destinations PackageDestination[]
+  bookings     Booking[]
+}
+
+model PackageDestination {
+  id            Int @id @default(autoincrement())
+  packageId     Int
+  destinationId Int
+  visitOrder    Int
+
+  tourPackage TourPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [destinationId], references: [id])
+}
+
+model FeeSetting {
+  id             Int     @id @default(autoincrement())
+  municipalityId Int
+  feeCode        String // ENVIRONMENTAL | INSURANCE | RESERVATION
+  label          String
+  calcType       String // per_pax | per_booking | percent_of_total
+  amount         Float
+  isActive       Boolean @default(true)
+
+  municipality Municipality @relation(fields: [municipalityId], references: [id])
+
+  @@unique([municipalityId, feeCode])
+}
+
+model TransportRoute {
+  id             Int     @id @default(autoincrement())
+  municipalityId Int
+  routeName      String
+  vehicleType    String?
+  feePerPax      Float?
+  feePerTrip     Float?
+  maxPaxPerTrip  Int?
+  isActive       Boolean @default(true)
+
+  municipality Municipality @relation(fields: [municipalityId], references: [id])
+  bookings     Booking[]
+}
+
+model Booking {
+  id               Int      @id @default(autoincrement())
+  bookingCode      String   @unique
+  municipalityId   Int
+  bookingType      String // custom | package
+  packageId        Int?
+  touristName      String
+  touristMobile    String
+  touristEmail     String?
+  touristOrigin    String?
+  touristCountry   String   @default("Philippines")
+  validIdType      String?
+  paxAdults        Int      @default(1)
+  paxChildren      Int      @default(0)
+  visitDate        DateTime
+  durationDays     Int      @default(1)
+  needsTransport   Boolean  @default(false)
+  transportRouteId Int?
+  baggageKg        Float    @default(0) // approx. extra baggage weight — helps the guide plan
+  baggageNotes     String?
+  specialRequests  String?
+  totalAmount      Float
+  reservationDue   Float
+  amountPaid       Float    @default(0)
+  status           String   @default("pending_payment")
+  // pending_payment | pending_approval | approved | checked_in | completed | cancelled | expired
+  expiresAt        DateTime?
+  approvedById     Int?
+  approvedAt       DateTime?
+  cancelReason     String?
+  createdAt        DateTime @default(now())
+
+  municipality   Municipality         @relation(fields: [municipalityId], references: [id])
+  tourPackage    TourPackage?         @relation(fields: [packageId], references: [id])
+  transportRoute TransportRoute?      @relation(fields: [transportRouteId], references: [id])
+  destinations   BookingDestination[]
+  fees           BookingFee[]
+  payments       Payment[]
+  assignments    GuideAssignment[]
+  statusLogs     BookingStatusLog[]
+  qrPass         QrPass?
+  smsLogs        SmsLog[]
+}
+
+model BookingDestination {
+  id            Int      @id @default(autoincrement())
+  bookingId     Int
+  destinationId Int
+  visitOrder    Int
+  visitDate     DateTime
+
+  booking     Booking     @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [destinationId], references: [id])
+}
+
+model BookingFee {
+  id        Int    @id @default(autoincrement())
+  bookingId Int
+  feeCode   String // ENTRANCE | ENVIRONMENTAL | GUIDE | TRANSPORT | INSURANCE
+  label     String
+  quantity  Int    @default(1)
+  unitAmount Float
+  lineTotal Float
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model GuideAssignment {
+  id         Int      @id @default(autoincrement())
+  bookingId  Int
+  guideId    Int
+  dutyDate   DateTime
+  status     String   @default("assigned") // assigned | notified | confirmed | completed | declined
+  notifiedAt DateTime?
+
+  booking Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  guide   TourGuide @relation(fields: [guideId], references: [id])
+}
+
+model BookingStatusLog {
+  id          Int      @id @default(autoincrement())
+  bookingId   Int
+  fromStatus  String?
+  toStatus    String
+  actorUserId Int?
+  note        String?
+  createdAt   DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  bookingId   Int
+  paymentKind String // reservation | downpayment | balance
+  method      String // gcash | maya | card | treasurer_cash
+  amount      Float
+  gatewayRef  String?  // GCash 13-digit reference number (manual flow) or PSP intent id
+  senderName  String?  // name on the GCash account that sent the money
+  proofUrl    String?  // optional uploaded payment screenshot
+  orNumber    String?
+  status      String   @default("pending") // pending | paid | failed | refunded
+  paidAt      DateTime?
+  recordedById Int?
+  createdAt   DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model QrPass {
+  id        Int      @id @default(autoincrement())
+  bookingId Int      @unique
+  token     String   @unique
+  issuedAt  DateTime @default(now())
+  scannedAt DateTime?
+  scannedById Int?
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model SmsLog {
+  id             Int      @id @default(autoincrement())
+  bookingId      Int?
+  recipientMobile String
+  recipientType  String // tourist | guide | admin
+  template       String
+  message        String
+  status         String   @default("queued") // queued | sent | failed
+  sentAt         DateTime?
+  createdAt      DateTime @default(now())
+
+  booking Booking? @relation(fields: [bookingId], references: [id])
+}
+
+// Shared photo gallery: up to 10 photos per destination / guide / accommodation.
+model GalleryImage {
+  id         Int      @id @default(autoincrement())
+  entityType String // destination | guide | accommodation | hero
+  entityId   Int
+  imageUrl   String
+  mediaType  String   @default("image") // image | video
+  caption    String?
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+}
+
+model LocalProduct {
+  id             Int    @id @default(autoincrement())
+  municipalityId Int
+  name           String
+  category       String?
+  description    String?
+  producer       String?
+  whereToBuy     String?
+  image          String?
+  status         String @default("available")
+
+  municipality Municipality @relation(fields: [municipalityId], references: [id])
+}
+
+model Accommodation {
+  id             Int     @id @default(autoincrement())
+  municipalityId Int
+  name           String
+  type           String // homestay | cottage | inn
+  barangay       String?
+  description    String?
+  contactPerson  String?
+  contactNumber  String?
+  priceRange     String?
+  image          String?
+  status         String  @default("active")
+
+  municipality Municipality @relation(fields: [municipalityId], references: [id])
+}

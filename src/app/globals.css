@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-bricolage: "Bricolage Grotesque";
+  --font-inter: "Inter";
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-bg text-ink-900 antialiased;
+    /* soft biophilic canopy tint in the page background */
+    background-image:
+      radial-gradient(60rem 40rem at 105% -8%, rgba(46, 125, 50, 0.07), transparent 60%),
+      radial-gradient(52rem 34rem at -10% 4%, rgba(23, 127, 164, 0.06), transparent 55%);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-bricolage), system-ui, sans-serif;
+    letter-spacing: -0.015em;
+  }
+  /* Consistent, visible keyboard focus everywhere */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    @apply outline-none ring-2 ring-brand-500/60 ring-offset-2 ring-offset-bg;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: theme("colors.brand.100");
+    color: theme("colors.brand.900");
+  }
+}
+
+@layer components {
+  .wrap {
+    @apply mx-auto max-w-wrap px-5 sm:px-6;
+  }
+
+  /* Buttons — organic radius, hover lift, active press, focus ring */
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-btn px-5 py-2.5
+           text-sm font-bold transition-all duration-200 ease-out
+           active:translate-y-px focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-bg;
+  }
+  .btn-amber {
+    @apply bg-cta-500 text-cta-ink shadow-sm ring-cta-500
+           hover:-translate-y-0.5 hover:bg-cta-600 hover:shadow-pop;
+  }
+  .btn-green {
+    @apply bg-brand-700 text-white shadow-sm ring-brand-500
+           hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-pop;
+  }
+  .btn-outline {
+    @apply border-[1.5px] border-brand-200 bg-white text-brand-700 ring-brand-500
+           hover:border-brand-500 hover:bg-brand-50;
+  }
+
+  /* Cards — softer organic radius, layered shadow, gentle lift on hover */
+  .card {
+    @apply overflow-hidden rounded-card border border-line/70 bg-surface shadow-card
+           transition-all duration-300 ease-out;
+  }
+  .card-hover {
+    @apply hover:-translate-y-1 hover:border-brand-200 hover:shadow-pop;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-brand-100 px-2.5 py-1
+           text-xs font-bold text-brand-700;
+  }
+
+  /* Section eyebrow label */
+  .eyebrow {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-brand-100 px-3 py-1
+           text-[11px] font-bold uppercase tracking-[0.12em] text-brand-700;
+  }
+
+  /* Frosted-glass surface for hero overlays */
+  .glass {
+    @apply border border-white/50 bg-white/15 backdrop-blur-md;
+  }
+}
+
+@layer utilities {
+  /* Biophilic gradient washes */
+  .bg-canopy {
+    @apply bg-gradient-to-br from-brand-900 via-brand-700 to-brand-500;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Scroll-reveal entrance (progressive enhancement) */
+  .reveal {
+    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+/* Upload progress shimmer */
+@keyframes upload-progress {
+  0%   { width: 0%; margin-left: 0%; }
+  50%  { width: 70%; margin-left: 15%; }
+  100% { width: 0%; margin-left: 100%; }
+}
+
+/* subtle scrollbar for the itinerary panels */
+.scroll-thin::-webkit-scrollbar { width: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: #cdd8cd; border-radius: 8px; }
+
+/* Honour reduced-motion for all decorative animation */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
