@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PlusIcon, PencilSimpleIcon } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
-import { peso, parseList } from "@/lib/format";
+import { peso, parseList, isMediaUrl } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +38,7 @@ export default async function AdminGuides() {
               <tr key={g.id} className="border-t border-line hover:bg-brand-100/30">
                 <td className="p-3 font-semibold">
                   <div className="flex items-center gap-2">
-                    {g.photoUrl?.startsWith("/uploads/") && (
+                    {isMediaUrl(g.photoUrl) && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={g.photoUrl} alt="" className="h-8 w-8 rounded-full object-cover" />
                     )}

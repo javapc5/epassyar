@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MountainsIcon, PhoneIcon, EnvelopeSimpleIcon } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
 import { TopoLines } from "./decor/NatureDecor";
+import { isMediaUrl } from "@/lib/format";
 
 const EXPLORE = [
   { href: "/destinations", label: "Destinations" },
@@ -23,7 +24,7 @@ const OFFICE = [
 export default async function SiteFooter() {
   const muni = await prisma.municipality.findUnique({ where: { id: 1 } });
   const name = muni?.name ?? "Bagulin";
-  const logo = muni?.logoUrl?.startsWith("/uploads/") ? muni.logoUrl : null;
+  const logo = isMediaUrl(muni?.logoUrl) ? muni!.logoUrl : null;
 
   return (
     <footer className="relative mt-14 overflow-hidden bg-canopy text-[#bcd9bd]">

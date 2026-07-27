@@ -8,7 +8,7 @@ import {
   ArrowRightIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import Photo from "./Photo";
-import { peso, parseList } from "@/lib/format";
+import { peso, parseList, isMediaUrl } from "@/lib/format";
 
 export function DestinationCard({ d, gallery }: { d: any; gallery?: string[] }) {
   const acts = parseList(d.activities);
@@ -100,7 +100,7 @@ export function GuideCard({ g }: { g: any }) {
   const initials = g.fullName.split(" ").map((n: string) => n[0]).slice(0, 2).join("");
   const colors = ["#2e7d32", "#0277BD", "#8a6100", "#6a1b9a", "#00695c"];
   const color = colors[g.id % colors.length];
-  const hasPhoto = g.photoUrl?.startsWith("/uploads/");
+  const hasPhoto = isMediaUrl(g.photoUrl);
   return (
     <Link href={`/guides/${g.id}`} className="card card-hover group block overflow-hidden">
       <div className="relative aspect-square w-full overflow-hidden bg-brand-100">

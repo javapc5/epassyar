@@ -40,7 +40,7 @@ export default function ImageCropUpload({
   const [zoom, setZoom] = useState(1);
   const [areaPixels, setAreaPixels] = useState<Area | null>(null);
   const [preview, setPreview] = useState<string | null>(null); // cropped, pre-upload
-  const [saved, setSaved] = useState<string | null>(initial && initial.startsWith("/uploads/") ? initial : null);
+  const [saved, setSaved] = useState<string | null>(initial || null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 

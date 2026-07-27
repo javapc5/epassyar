@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MountainsIcon } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
 import MobileNav from "./MobileNav";
+import { isMediaUrl } from "@/lib/format";
 
 const NAV = [
   { href: "/destinations", label: "Destinations" },
@@ -13,7 +14,7 @@ const NAV = [
 export default async function SiteHeader() {
   const muni = await prisma.municipality.findUnique({ where: { id: 1 } });
   const name = muni?.name ?? "Bagulin";
-  const logo = muni?.logoUrl?.startsWith("/uploads/") ? muni.logoUrl : null;
+  const logo = isMediaUrl(muni?.logoUrl) ? muni!.logoUrl : null;
 
   return (
     <header className="sticky top-0 z-50 border-b border-line/80 bg-bg/80 backdrop-blur-lg supports-[backdrop-filter]:bg-bg/70">

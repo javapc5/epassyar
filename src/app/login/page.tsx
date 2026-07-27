@@ -4,6 +4,7 @@ import { MountainsIcon, LockKeyIcon, ArrowLeftIcon, WarningCircleIcon, SignInIco
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
 import { login } from "./actions";
+import { isMediaUrl } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const [user, muni] = await Promise.all([getSessionUser(), prisma.municipality.findUnique({ where: { id: 1 } })]);
   if (user) redirect("/admin");
   const name = muni?.name ?? "Bagulin";
-  const logo = muni?.logoUrl?.startsWith("/uploads/") ? muni.logoUrl : null;
+  const logo = isMediaUrl(muni?.logoUrl) ? muni!.logoUrl : null;
 
   return (
     <main className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-canopy px-5 py-10">

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MapPinIcon, StarIcon, CalendarCheckIcon, MedalIcon, ArrowLeftIcon, UserIcon } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
-import { parseList } from "@/lib/format";
+import { parseList, isMediaUrl } from "@/lib/format";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import PhotoGallery from "@/components/PhotoGallery";
@@ -18,7 +18,7 @@ export default async function GuideDetail({ params }: { params: Promise<{ id: st
   const initials = g.fullName.split(" ").map((n) => n[0]).slice(0, 2).join("");
   const colors = ["#2e7d32", "#0277BD", "#8a6100", "#6a1b9a", "#00695c"];
   const color = colors[g.id % colors.length];
-  const hasPhoto = g.photoUrl?.startsWith("/uploads/");
+  const hasPhoto = isMediaUrl(g.photoUrl);
 
   return (
     <>

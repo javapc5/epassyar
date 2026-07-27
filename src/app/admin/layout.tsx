@@ -15,6 +15,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { logout } from "@/app/login/actions";
+import { isMediaUrl } from "@/lib/format";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: <GaugeIcon size={20} weight="duotone" /> },
@@ -30,7 +31,7 @@ const NAV = [
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const [user, muni] = await Promise.all([requireUser(), prisma.municipality.findUnique({ where: { id: 1 } })]);
-  const logo = muni?.logoUrl?.startsWith("/uploads/") ? muni.logoUrl : null;
+  const logo = isMediaUrl(muni?.logoUrl) ? muni!.logoUrl : null;
   return (
     <div className="min-h-screen bg-bg">
       <div className="flex">

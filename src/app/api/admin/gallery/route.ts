@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   if (!ENTITY_TYPES.has(entityType) || !entityId) {
     return NextResponse.json({ error: "Invalid entity." }, { status: 400 });
   }
-  if (!imageUrl.startsWith("/uploads/")) {
+  if (!imageUrl.startsWith("/uploads/") && !imageUrl.startsWith("https://")) {
     return NextResponse.json({ error: "Invalid media path." }, { status: 400 });
   }
 

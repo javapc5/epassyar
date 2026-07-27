@@ -1,3 +1,8 @@
+/** Returns true for both local /uploads/ paths and Cloudinary https:// URLs. */
+export function isMediaUrl(url: string | null | undefined): boolean {
+  return !!url && (url.startsWith("/uploads/") || url.startsWith("https://"));
+}
+
 export function peso(amount: number): string {
   return "₱" + amount.toLocaleString("en-PH", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 }

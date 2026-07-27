@@ -1,10 +1,6 @@
 import Scenery from "./Scenery";
+import { isMediaUrl } from "@/lib/format";
 
-/**
- * Renders an uploaded photo when one exists (src starts with "/uploads/"),
- * otherwise falls back to the illustrated SVG scenery for the category.
- * This is what makes admin photo uploads appear across the whole site.
- */
 export default function Photo({
   src,
   kind,
@@ -16,7 +12,7 @@ export default function Photo({
   alt?: string;
   className?: string;
 }) {
-  if (src && src.startsWith("/uploads/")) {
+  if (isMediaUrl(src)) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={alt ?? ""} className={`${className ?? ""} object-cover`} />;
   }

@@ -1,3 +1,5 @@
+import { isMediaUrl } from "@/lib/format";
+
 /** Small shared building blocks for admin forms (server-component friendly). */
 
 export function Field({ label, hint, children, className }: { label: string; hint?: string; children: React.ReactNode; className?: string }) {
@@ -32,7 +34,7 @@ export function FormCard({ title, children }: { title: string; children: React.R
 }
 
 export function CurrentPhoto({ src }: { src?: string | null }) {
-  if (!src || !src.startsWith("/uploads/")) return null;
+  if (!isMediaUrl(src)) return null;
   return (
     <div className="flex items-center gap-2">
       {/* eslint-disable-next-line @next/next/no-img-element */}
