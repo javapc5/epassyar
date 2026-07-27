@@ -38,7 +38,7 @@ export default async function AdminDestinations() {
                   <div className="flex items-center gap-2">
                     {isMediaUrl(d.mainImage) && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={d.mainImage} alt="" className="h-8 w-12 rounded object-cover" />
+                      <img src={d.mainImage ?? undefined} alt="" className="h-8 w-12 rounded object-cover" />
                     )}
                     {d.name}
                   </div>

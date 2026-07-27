@@ -40,7 +40,7 @@ export default async function AdminGuides() {
                   <div className="flex items-center gap-2">
                     {isMediaUrl(g.photoUrl) && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={g.photoUrl} alt="" className="h-8 w-8 rounded-full object-cover" />
+                      <img src={g.photoUrl ?? undefined} alt="" className="h-8 w-8 rounded-full object-cover" />
                     )}
                     {g.fullName}
                   </div>
