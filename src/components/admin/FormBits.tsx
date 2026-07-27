@@ -38,7 +38,7 @@ export function CurrentPhoto({ src }: { src?: string | null }) {
   return (
     <div className="flex items-center gap-2">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt="Current photo" className="h-16 w-24 rounded-lg object-cover" />
+      <img src={src ?? undefined} alt="Current photo" className="h-16 w-24 rounded-lg object-cover" />
       <span className="text-xs text-ink-600">Current photo — choose a new file to replace it.</span>
     </div>
   );

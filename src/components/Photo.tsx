@@ -14,7 +14,7 @@ export default function Photo({
 }) {
   if (isMediaUrl(src)) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={alt ?? ""} className={`${className ?? ""} object-cover`} />;
+    return <img src={src ?? undefined} alt={alt ?? ""} className={`${className ?? ""} object-cover`} />;
   }
   return <Scenery kind={kind} className={className} />;
 }
