@@ -1,8 +1,11 @@
 import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 
-// Cloudinary auto-configures from CLOUDINARY_URL env var
-// Format: cloudinary://api_key:api_secret@cloud_name
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
 const MAX_VIDEO_BYTES = 40 * 1024 * 1024; // 40 MB — hero banner clips
