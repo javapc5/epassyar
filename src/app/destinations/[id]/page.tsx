@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   MapPinIcon,
   PersonSimpleHikeIcon,
@@ -10,14 +11,38 @@ import {
   ArrowLeftIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
-import { peso, parseList } from "@/lib/format";
+import { peso, parseList, isMediaUrl } from "@/lib/format";
 import { remainingCapacity } from "@/lib/availability";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Photo from "@/components/Photo";
 import PhotoGallery from "@/components/PhotoGallery";
+import ShareButton from "@/components/ShareButton";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const d = await prisma.destination.findUnique({ where: { id: Number(id) } });
+  if (!d) return {};
+  const description = d.description ?? `Brgy. ${d.barangay} · ${d.category} — plan your visit with ePassyar, the official smart tourism platform of Bagulin, La Union.`;
+  return {
+    title: `${d.name} · ePassyar`,
+    description,
+    openGraph: {
+      title: d.name,
+      description,
+      type: "website",
+      images: isMediaUrl(d.mainImage) ? [{ url: d.mainImage! }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: d.name,
+      description,
+      images: isMediaUrl(d.mainImage) ? [d.mainImage!] : undefined,
+    },
+  };
+}
 
 export default async function DestinationDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -33,10 +58,13 @@ export default async function DestinationDetail({ params }: { params: Promise<{ 
       <div className="relative h-72">
         <Photo src={d.mainImage} kind={d.category} alt={d.name} className="h-full w-full" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="wrap absolute inset-x-0 bottom-0 pb-5 text-white">
-          <Link href="/destinations" className="mb-2 inline-flex items-center gap-1 text-sm font-semibold opacity-90 hover:opacity-100">
+        <div className="wrap absolute inset-x-0 top-4 flex justify-between">
+          <Link href="/destinations" className="inline-flex items-center gap-1 text-sm font-semibold text-white opacity-90 hover:opacity-100">
             <ArrowLeftIcon size={15} /> All destinations
           </Link>
+          <ShareButton title={d.name} text={`${d.name} — Brgy. ${d.barangay}, Bagulin`} path={`/destinations/${d.id}`} />
+        </div>
+        <div className="wrap absolute inset-x-0 bottom-0 pb-5 text-white">
           <h1 className="font-display text-[1.75rem] font-extrabold drop-shadow-lg">{d.name}</h1>
           <div className="mt-1 flex items-center gap-2 drop-shadow">
             <MapPinIcon size={16} /> Brgy. {d.barangay} · {d.category}

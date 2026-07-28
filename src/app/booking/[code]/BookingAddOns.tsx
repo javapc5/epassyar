@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { BasketIcon, StarIcon, ArrowRightIcon, StorefrontIcon } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRightIcon, StorefrontIcon } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
-import { unitPrice, productAvailability, shortDate, isMediaUrl } from "@/lib/format";
+import { productAvailability, shortDate } from "@/lib/format";
+import { ProductCard } from "@/components/cards";
 
 /**
  * Soft product endorsement shown on the booking page — the one screen a tourist
@@ -45,25 +46,7 @@ export default async function BookingAddOns({
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         {ready.map((pr) => (
-          <div key={pr.id} className="card flex flex-col">
-            <div className="flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br from-brand-100 to-[#d7ead8]">
-              {isMediaUrl(pr.image) ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={pr.image!} alt={pr.name} className="h-full w-full object-cover" />
-              ) : (
-                <BasketIcon size={32} weight="duotone" className="text-brand-700" />
-              )}
-            </div>
-            <div className="flex flex-1 flex-col p-3">
-              <h4 className="font-display text-[14px] font-bold leading-tight">{pr.name}</h4>
-              {pr.ratingCount > 0 && (
-                <div className="mt-1 inline-flex items-center gap-0.5 text-xs font-semibold text-ink-900">
-                  <StarIcon size={11} weight="fill" className="text-cta-500" /> {pr.ratingAvg.toFixed(1)}
-                </div>
-              )}
-              <div className="mt-auto pt-2 font-display text-sm font-extrabold text-brand-700">{unitPrice(pr.price, pr.unit)}</div>
-            </div>
-          </div>
+          <ProductCard key={pr.id} p={pr} compact />
         ))}
       </div>
 

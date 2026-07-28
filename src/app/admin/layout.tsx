@@ -7,6 +7,7 @@ import {
   ChartLineUpIcon,
   HouseIcon,
   PackageIcon,
+  BasketIcon,
   GearSixIcon,
   HouseLineIcon,
   QrCodeIcon,
@@ -23,6 +24,7 @@ const NAV = [
   { href: "/admin/checkin", label: "QR Check-in", icon: <QrCodeIcon size={20} weight="duotone" /> },
   { href: "/admin/destinations", label: "Destinations", icon: <MountainsIcon size={20} weight="duotone" /> },
   { href: "/admin/packages", label: "Packages", icon: <PackageIcon size={20} weight="duotone" /> },
+  { href: "/admin/products", label: "Local Products", icon: <BasketIcon size={20} weight="duotone" /> },
   { href: "/admin/guides", label: "Tour Guides", icon: <UserCircleCheckIcon size={20} weight="duotone" /> },
   { href: "/admin/stay", label: "Homestays", icon: <HouseLineIcon size={20} weight="duotone" /> },
   { href: "/admin/analytics", label: "Analytics", icon: <ChartLineUpIcon size={20} weight="duotone" /> },
@@ -35,7 +37,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-screen bg-bg">
       <div className="flex">
-        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-line bg-brand-900 p-4 text-white md:flex">
+        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-line bg-ink-900 p-4 text-white md:flex">
           <Link href="/admin" className="mb-6 flex items-center gap-2 font-display">
             {logo ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -54,7 +56,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </Link>
           <nav className="flex flex-col gap-1">
             {NAV.map((n) => (
-              <Link key={n.href} href={n.href} className="flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium text-[#cfe6cf] hover:bg-white/10 hover:text-white">
+              <Link key={n.href} href={n.href} className="flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium text-[#B4B9C0] hover:bg-white/10 hover:text-white">
                 {n.icon} {n.label}
               </Link>
             ))}
@@ -62,13 +64,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <div className="mt-auto space-y-1 border-t border-white/10 pt-3">
             <div className="px-3 pb-1">
               <div className="truncate text-sm font-bold text-white">{user.fullName}</div>
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-[#9dbf9e]">{user.role.replace("_", " ")}</div>
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-brand-400">{user.role.replace("_", " ")}</div>
             </div>
-            <Link href="/" className="flex items-center gap-2 rounded-btn px-3 py-2 text-sm text-[#9dbf9e] hover:bg-white/10 hover:text-white">
+            <Link href="/" className="flex items-center gap-2 rounded-btn px-3 py-2 text-sm text-[#B4B9C0] hover:bg-white/10 hover:text-white">
               <HouseIcon size={18} /> View public site
             </Link>
             <form action={logout}>
-              <button className="flex w-full items-center gap-2 rounded-btn px-3 py-2 text-sm text-[#9dbf9e] hover:bg-white/10 hover:text-white">
+              <button className="flex w-full items-center gap-2 rounded-btn px-3 py-2 text-sm text-[#B4B9C0] hover:bg-white/10 hover:text-white">
                 <SignOutIcon size={18} /> Sign out
               </button>
             </form>

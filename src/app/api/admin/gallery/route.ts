@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
 
 const MAX_PHOTOS = 10;
-const ENTITY_TYPES = new Set(["destination", "guide", "accommodation", "hero"]);
+const ENTITY_TYPES = new Set(["destination", "guide", "accommodation", "hero", "product"]);
 
 /** Every handler in this file is staff-only; middleware is the outer gate. */
 async function denyIfAnonymous() {

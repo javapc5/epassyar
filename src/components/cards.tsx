@@ -4,54 +4,56 @@ import {
   StarIcon,
   PersonSimpleHikeIcon,
   ClockIcon,
-  ImagesIcon,
   ArrowRightIcon,
+  BasketIcon,
+  SparkleIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import Photo from "./Photo";
-import { peso, parseList, isMediaUrl } from "@/lib/format";
+import ShareButton from "./ShareButton";
+import AddToCartButton from "./AddToCartButton";
+import { peso, parseList, isMediaUrl, unitPrice, productAvailability } from "@/lib/format";
 
-export function DestinationCard({ d, gallery }: { d: any; gallery?: string[] }) {
+const AVAIL_TONE: Record<string, string> = {
+  ok: "bg-ok/15 text-ok",
+  warn: "bg-amber-100 text-amber-800",
+  off: "bg-ink-100 text-ink-500",
+};
+
+export function DestinationCard({ d }: { d: any }) {
   const acts = parseList(d.activities);
-  const thumbs = gallery ?? [];
   return (
-    <Link href={`/destinations/${d.id}`} className="card card-hover group block">
-      <div className="relative h-40 overflow-hidden sm:h-36">
-        <Photo src={d.mainImage} kind={d.category} alt={d.name} className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-105" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-        <span className="pill absolute bottom-2.5 left-2.5 bg-white/90 text-brand-700">{d.category}</span>
-        {thumbs.length > 0 && (
-          <span className="pill absolute right-2.5 top-2.5 bg-black/55 text-white">
-            <ImagesIcon size={12} weight="fill" /> {thumbs.length}
-          </span>
-        )}
-      </div>
-      <div className="p-4">
-        <h4 className="font-display text-[15px] font-bold leading-tight">{d.name}</h4>
-        <div className="mt-1 flex items-center gap-1 text-xs text-ink-600">
-          <MapPinIcon size={13} /> Brgy. {d.barangay}
+    <div className="card card-hover group relative">
+      <Link href={`/destinations/${d.id}`} className="contents">
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <Photo src={d.mainImage} kind={d.category} alt={d.name} className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+          <span className="pill absolute bottom-2.5 left-2.5 bg-white/90 text-ink-700">{d.category}</span>
         </div>
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {acts.slice(0, 2).map((a) => (
-            <span key={a} className="rounded-full bg-[#f0f4ef] px-2 py-0.5 text-[10.5px] font-semibold text-[#41564a]">
-              {a}
-            </span>
-          ))}
-          {d.guideRequired && (
-            <span className="pill bg-[#fff3d6] text-[#8a6100]">
-              <PersonSimpleHikeIcon size={12} weight="fill" /> Guide required
-            </span>
-          )}
-        </div>
-        {thumbs.length > 0 && (
-          <div className="mt-2.5 flex gap-1.5">
-            {thumbs.slice(0, 4).map((t, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={i} src={t} alt="" className="h-10 w-1/4 rounded-md object-cover" />
-            ))}
+        <div className="p-5">
+          <h4 className="font-display text-[15px] font-bold leading-tight">{d.name}</h4>
+          <div className="mt-1 flex items-center gap-1 text-xs text-ink-600">
+            <MapPinIcon size={13} /> Brgy. {d.barangay}
           </div>
-        )}
-      </div>
-    </Link>
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {acts.slice(0, 2).map((a) => (
+              <span key={a} className="chip">{a}</span>
+            ))}
+            {d.guideRequired && (
+              <span className="pill bg-[#fff3d6] text-[#8a6100]">
+                <PersonSimpleHikeIcon size={12} weight="fill" /> Guide required
+              </span>
+            )}
+          </div>
+        </div>
+      </Link>
+      <ShareButton
+        variant="icon"
+        title={d.name}
+        text={`${d.name} — Brgy. ${d.barangay}, Bagulin`}
+        path={`/destinations/${d.id}`}
+        className="absolute right-2.5 top-2.5 z-10"
+      />
+    </div>
   );
 }
 
@@ -68,7 +70,7 @@ export function PackageCard({ p, slotsLeft }: { p: any; slotsLeft?: number }) {
           <span className="pill absolute right-3 top-3 bg-cta-500 text-cta-ink">{slotsLeft} slots left</span>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-1 flex-col gap-2 p-5">
         <h3 className="font-display text-[15px] font-bold leading-tight">{p.name}</h3>
         <div className="text-[13px] text-ink-600">
           {p.destinations?.map((pd: any) => pd.destination.name).join(" → ")}
@@ -123,5 +125,70 @@ export function GuideCard({ g }: { g: any }) {
         </div>
       </div>
     </Link>
+  );
+}
+
+/**
+ * Shared product tile — used by the products catalog (default + featured) and
+ * the smaller BookingAddOns strip (compact), so every product reads at a
+ * consistent size across the site instead of three hand-tuned duplicates.
+ */
+export function ProductCard({ p, featured, compact }: { p: any; featured?: boolean; compact?: boolean }) {
+  const avail = productAvailability(p);
+  return (
+    <div className={`card card-hover group relative flex flex-col ${featured ? "ring-1 ring-brand-200" : ""}`}>
+      <Link href={`/products/${p.id}`} className="contents">
+        <div className={`relative overflow-hidden bg-gradient-to-br from-ink-100 to-[#E1E4E8] ${compact ? "aspect-[16/10]" : "aspect-[4/3]"}`}>
+          {isMediaUrl(p.image) ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={p.image!} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              <BasketIcon size={compact ? 26 : 40} weight="duotone" className="text-ink-400" />
+            </div>
+          )}
+        </div>
+        <div className={`flex flex-1 flex-col ${compact ? "p-3" : "p-5"}`}>
+          {p.category && <span className="chip mb-1.5 w-fit">{p.category}</span>}
+          <h4 className={`font-display font-bold leading-tight ${compact ? "text-[14px]" : "text-[15px]"}`}>{p.name}</h4>
+          {!compact && p.description && <p className="mt-1 line-clamp-2 text-[13px] text-ink-600">{p.description}</p>}
+          <div className="mt-1.5 flex items-center gap-2 text-xs text-ink-600">
+            {p.ratingCount > 0 && (
+              <span className="inline-flex items-center gap-0.5 font-semibold text-ink-900">
+                <StarIcon size={12} weight="fill" className="text-cta-500" /> {p.ratingAvg.toFixed(1)}
+                {!compact && <span className="font-normal text-ink-500">({p.ratingCount})</span>}
+              </span>
+            )}
+            {!compact && p.producer && <span className="truncate">· {p.producer}</span>}
+          </div>
+          <div className="mt-auto flex items-center justify-between pt-3">
+            <span className={`font-display font-extrabold text-brand-700 ${compact ? "text-sm" : "text-base"}`}>{unitPrice(p.price, p.unit)}</span>
+            {!compact && <span className={`pill ${AVAIL_TONE[avail.tone]}`}>{avail.label}</span>}
+          </div>
+        </div>
+      </Link>
+      <div className={compact ? "px-3 pb-3" : "px-5 pb-5"}>
+        <AddToCartButton
+          product={{ id: p.id, name: p.name, image: isMediaUrl(p.image) ? p.image : null, price: p.price, unit: p.unit }}
+          disabled={!avail.ok}
+          disabledLabel={avail.label}
+          className={`w-full justify-center ${compact ? "!py-1 !text-[11px]" : ""}`}
+        />
+      </div>
+      {featured && (
+        <span className="pill absolute left-3 top-3 z-10 bg-cta-500 text-cta-ink shadow-sm">
+          <SparkleIcon size={12} weight="fill" /> Featured
+        </span>
+      )}
+      {!compact && (
+        <ShareButton
+          variant="icon"
+          title={p.name}
+          text={`${p.name} — ${unitPrice(p.price, p.unit)}`}
+          path={`/products/${p.id}`}
+          className="absolute right-3 top-3 z-10"
+        />
+      )}
+    </div>
   );
 }

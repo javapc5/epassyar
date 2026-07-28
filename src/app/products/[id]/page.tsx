@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   ArrowLeftIcon,
   StarIcon,
@@ -15,8 +16,35 @@ import { peso, unitPrice, productAvailability, isMediaUrl } from "@/lib/format";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import PhotoGallery from "@/components/PhotoGallery";
+import ShareButton from "@/components/ShareButton";
+import AddToCartPanel from "@/components/AddToCartPanel";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const numId = Number(id);
+  if (!Number.isInteger(numId)) return {};
+  const p = await prisma.localProduct.findUnique({ where: { id: numId } });
+  if (!p) return {};
+  const description = p.description ?? `${unitPrice(p.price, p.unit)} — sourced from local farmers and cooperatives through the Bagulin Tourism Office.`;
+  return {
+    title: `${p.name} · ePassyar Local Products`,
+    description,
+    openGraph: {
+      title: p.name,
+      description,
+      type: "website",
+      images: isMediaUrl(p.image) ? [{ url: p.image! }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: p.name,
+      description,
+      images: isMediaUrl(p.image) ? [p.image!] : undefined,
+    },
+  };
+}
 
 const TONE: Record<string, string> = {
   ok: "bg-ok/15 text-ok",
@@ -52,15 +80,18 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
           // eslint-disable-next-line @next/next/no-img-element
           <img src={p.image!} alt={p.name} className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-100 to-[#d7ead8]">
-            <BasketIcon size={72} weight="duotone" className="text-brand-700" />
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-100 to-[#E1E4E8]">
+            <BasketIcon size={72} weight="duotone" className="text-ink-400" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
-        <div className="wrap absolute inset-x-0 bottom-0 pb-5 text-white">
-          <Link href="/products" className="mb-2 inline-flex items-center gap-1 text-sm font-semibold opacity-90 hover:opacity-100">
+        <div className="wrap absolute inset-x-0 top-4 flex justify-between">
+          <Link href="/products" className="inline-flex items-center gap-1 text-sm font-semibold text-white opacity-90 hover:opacity-100">
             <ArrowLeftIcon size={15} /> All products
           </Link>
+          <ShareButton title={p.name} text={`${p.name} — ${unitPrice(p.price, p.unit)}`} path={`/products/${p.id}`} />
+        </div>
+        <div className="wrap absolute inset-x-0 bottom-0 pb-5 text-white">
           <h1 className="font-display text-[1.75rem] font-extrabold drop-shadow-lg">{p.name}</h1>
           <div className="mt-1 flex flex-wrap items-center gap-2 drop-shadow">
             {p.category && <span>{p.category}</span>}
@@ -121,17 +152,20 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
             {avail.label}
           </div>
 
+          <AddToCartPanel
+            product={{ id: p.id, name: p.name, image: isMediaUrl(p.image) ? p.image : null, price: p.price, unit: p.unit }}
+            disabled={!avail.ok}
+            disabledLabel={avail.label}
+          />
+
           <div className="mt-4 rounded-lg bg-brand-50 px-3 py-2.5 text-[12.5px] leading-relaxed text-ink-700">
             <StorefrontIcon size={14} weight="fill" className="mr-1 inline text-brand-700" />
-            Reserve and pay in advance from your booking, then pick up at the Municipal Tourism Office on your visit day.
+            Reserve and pay for cart items from your booking page, then pick up at the Municipal Tourism Office on your visit day.
           </div>
 
-          <Link href="/my-booking" className="btn btn-amber mt-4 w-full">
-            Reserve with your booking
+          <Link href="/my-booking" className="mt-3 block text-center text-[12.5px] font-semibold text-brand-700 hover:underline">
+            Already have a booking? Continue to My Booking
           </Link>
-          <div className="mt-2 text-center text-[11px] text-ink-600">
-            Products are ordered from your booking page. Don&apos;t have one yet? Plan a visit first.
-          </div>
         </aside>
       </main>
       <SiteFooter />

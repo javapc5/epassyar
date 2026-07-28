@@ -13,10 +13,10 @@
   }
   body {
     @apply bg-bg text-ink-900 antialiased;
-    /* soft biophilic canopy tint in the page background */
+    /* faint, neutral-first texture — brand color is reserved for deliberate accents, not a page-wide tint */
     background-image:
-      radial-gradient(60rem 40rem at 105% -8%, rgba(46, 125, 50, 0.07), transparent 60%),
-      radial-gradient(52rem 34rem at -10% 4%, rgba(23, 127, 164, 0.06), transparent 55%);
+      radial-gradient(60rem 40rem at 105% -8%, rgba(46, 125, 50, 0.035), transparent 60%),
+      radial-gradient(52rem 34rem at -10% 4%, rgba(23, 127, 164, 0.03), transparent 55%);
     background-attachment: fixed;
   }
   h1, h2, h3, h4, .font-display {
@@ -75,15 +75,20 @@
   .pill {
     @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm;
   }
+  /* Neutral by default — green is a deliberate accent, not the default label color */
   .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-ink-100 px-2.5 py-1
+           text-xs font-bold text-ink-700;
+  }
+  .chip-brand {
     @apply inline-flex items-center gap-1.5 rounded-full bg-brand-100 px-2.5 py-1
            text-xs font-bold text-brand-700;
   }
 
   /* Section eyebrow label */
   .eyebrow {
-    @apply inline-flex items-center gap-1.5 rounded-full bg-brand-100 px-3 py-1
-           text-[11px] font-bold uppercase tracking-[0.12em] text-brand-700;
+    @apply inline-flex items-center gap-1.5 rounded-full bg-ink-100 px-3 py-1
+           text-[11px] font-bold uppercase tracking-[0.12em] text-ink-700;
   }
 
   /* Frosted-glass surface for hero overlays */

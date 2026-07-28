@@ -26,7 +26,7 @@ export default async function SiteFooter() {
   const name = muni?.name ?? "Bagulin";
 
   return (
-    <footer className="relative mt-14 overflow-hidden bg-canopy text-[#bcd9bd]">
+    <footer className="relative mt-14 overflow-hidden bg-ink-900 text-[#B4B9C0]">
       <TopoLines className="pointer-events-none absolute inset-0 h-full w-full text-white/[0.06]" />
 
       <div className="wrap relative grid gap-8 py-10 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -42,7 +42,7 @@ export default async function SiteFooter() {
             </div>
           </div>
           {muni?.tagline && (
-            <p className="mt-3 text-[12px] leading-relaxed text-[#9dbf9e]">{muni.tagline}</p>
+            <p className="mt-3 text-[12px] leading-relaxed text-[#9CA3AB]">{muni.tagline}</p>
           )}
           <div className="mt-4 flex flex-col gap-1.5 text-[12px]">
             {muni?.contactNumber && (
@@ -56,7 +56,7 @@ export default async function SiteFooter() {
               </span>
             )}
             {muni?.address && (
-              <span className="text-[11.5px] text-[#9dbf9e]">{muni.address}</span>
+              <span className="text-[11.5px] text-[#9CA3AB]">{muni.address}</span>
             )}
           </div>
         </div>
@@ -77,9 +77,9 @@ export default async function SiteFooter() {
         </FooterCol>
       </div>
 
-      <div className="relative border-t border-white/10 py-3 text-center text-[11px] text-[#7a9e7b]">
+      <div className="relative border-t border-white/10 py-3 text-center text-[11px] text-[#7D838B]">
         © {new Date().getFullYear()} LGU {name}{muni?.province ? `, ${muni.province}` : ""} · Accommodations listed are recommendations only and not bookable online.
-        <span className="mx-2 opacity-40">·</span>Powered by <span className="font-semibold text-[#9dbf9e]"><span className="text-cta-400">e</span>Passyar</span>
+        <span className="mx-2 opacity-40">·</span>Powered by <span className="font-semibold text-[#9CA3AB]"><span className="text-cta-400">e</span>Passyar</span>
       </div>
     </footer>
   );

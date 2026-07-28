@@ -21,6 +21,7 @@ import { prisma } from "@/lib/prisma";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import HeroCarousel from "@/components/HeroCarousel";
+import WelcomeModal from "@/components/WelcomeModal";
 import { DestinationCard, PackageCard } from "@/components/cards";
 import { isMediaUrl } from "@/lib/format";
 
@@ -50,6 +51,7 @@ export default async function HomePage() {
   return (
     <>
       <SiteHeader />
+      <WelcomeModal municipalityName={muni?.name ?? "Bagulin"} tagline={muni?.tagline} />
 
       {/* HERO */}
       <section className="relative overflow-hidden text-white">
@@ -102,13 +104,13 @@ export default async function HomePage() {
       </section>
 
       {/* TRUST BAR */}
-      <div className="bg-canopy text-[12px] text-[#cfe6cf]">
+      <div className="bg-ink-900 text-[12px] text-[#B4B9C0]">
         <div className="wrap flex flex-wrap items-center gap-x-6 gap-y-1 py-2.5">
-          <Trust icon={<SealCheckIcon size={13} weight="fill" />} text={<><b className="text-white">Official LGU</b> reservation</>} />
-          <Trust icon={<DeviceMobileIcon size={13} weight="duotone" />} text={<>Pay via <b className="text-white">GCash · Maya · Card</b></>} />
+          <Trust icon={<SealCheckIcon size={13} weight="fill" className="text-brand-400" />} text={<><b className="text-white">Official LGU</b> reservation</>} />
+          <Trust icon={<DeviceMobileIcon size={13} weight="duotone" className="text-river-300" />} text={<>Pay via <b className="text-white">GCash · Maya · Card</b></>} />
           <span className="hidden sm:contents">
-            <Trust icon={<UserCircleCheckIcon size={13} weight="duotone" />} text={<><b className="text-white">22 accredited</b> guides</>} />
-            <Trust icon={<QrCodeIcon size={13} weight="duotone" />} text={<><b className="text-white">QR pass</b> by SMS</>} />
+            <Trust icon={<UserCircleCheckIcon size={13} weight="duotone" className="text-cta-400" />} text={<><b className="text-white">22 accredited</b> guides</>} />
+            <Trust icon={<QrCodeIcon size={13} weight="duotone" className="text-brand-400" />} text={<><b className="text-white">QR pass</b> by SMS</>} />
           </span>
         </div>
       </div>
@@ -218,7 +220,7 @@ export default async function HomePage() {
         href="/destinations"
         linkLabel="Explore all"
       >
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {destinations.map((d) => (
             <DestinationCard key={d.id} d={d} />
           ))}

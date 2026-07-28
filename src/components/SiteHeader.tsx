@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import MobileNav from "./MobileNav";
 import EpassyarMark from "./EpassyarMark";
+import CartBadge from "./CartBadge";
 
 const NAV = [
   { href: "/destinations", label: "Destinations" },
@@ -49,6 +50,7 @@ export default async function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <CartBadge />
           {/* Desktop CTA — hidden on mobile (it's inside the drawer) */}
           {/* Mobile hamburger */}
           <MobileNav />

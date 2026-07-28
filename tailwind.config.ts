@@ -33,15 +33,16 @@ const config: Config = {
           300: "#63AECB",
           100: "#DBEDF4",
         },
-        // Warm earthy neutrals
+        // True neutral grays — professional dashboard/e-commerce base, not green-tinted
         ink: {
-          900: "#232E27",
-          700: "#3D4A41",
-          600: "#5C6B60",
-          400: "#8A968C",
+          900: "#191B1D",
+          700: "#40454B",
+          600: "#5B6169",
+          400: "#8B9199",
+          100: "#EEF0F2",
         },
-        line: "#E4EBE2",
-        bg: "#F7FAF4",
+        line: "#E5E7EA",
+        bg: "#F8F9FB",
         surface: "#FFFFFF",
         ok: "#1B7D2C",
         warn: "#B45309",
@@ -58,8 +59,8 @@ const config: Config = {
         blob: "42% 58% 60% 40% / 42% 45% 55% 58%",
       },
       boxShadow: {
-        card: "0 1px 2px rgba(20,50,25,.04), 0 10px 26px -8px rgba(20,50,25,.12)",
-        pop: "0 6px 16px rgba(20,50,25,.10), 0 24px 48px -14px rgba(20,50,25,.22)",
+        card: "0 1px 2px rgba(15,17,20,.05), 0 10px 26px -8px rgba(15,17,20,.10)",
+        pop: "0 6px 16px rgba(15,17,20,.08), 0 24px 48px -14px rgba(15,17,20,.18)",
         focus: "0 0 0 3px rgba(46,125,50,.35)",
       },
       maxWidth: {
