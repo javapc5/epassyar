@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { BasketIcon, StarIcon, TrendUpIcon, SparkleIcon } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { peso, unitPrice, productAvailability, isMediaUrl } from "@/lib/format";
+import { unitPrice, productAvailability, isMediaUrl } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,8 @@ export default async function ProductsPage() {
               {trending.map((pr, i) => {
                 const avail = productAvailability(pr);
                 return (
-                  <article
+                  <Link
+                    href={`/products/${pr.id}`}
                     key={pr.id}
                     className={`card card-hover relative flex flex-col ${i === 0 ? "sm:col-span-1 ring-1 ring-brand-200" : ""}`}
                   >
@@ -78,7 +80,7 @@ export default async function ProductsPage() {
                         <span className={`pill ${TONE[avail.tone]}`}>{avail.label}</span>
                       </div>
                     </div>
-                  </article>
+                  </Link>
                 );
               })}
             </div>
@@ -92,7 +94,7 @@ export default async function ProductsPage() {
             {rest.map((pr) => {
               const avail = productAvailability(pr);
               return (
-                <article key={pr.id} className="card card-hover flex flex-col">
+                <Link href={`/products/${pr.id}`} key={pr.id} className="card card-hover flex flex-col">
                   <div className="flex h-32 items-center justify-center overflow-hidden bg-gradient-to-br from-brand-100 to-[#d7ead8]">
                     {isMediaUrl(pr.image) ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -117,7 +119,7 @@ export default async function ProductsPage() {
                     </div>
                     {pr.producer && <div className="mt-2 text-xs text-ink-500">By {pr.producer}</div>}
                   </div>
-                </article>
+                </Link>
               );
             })}
           </div>

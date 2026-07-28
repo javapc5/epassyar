@@ -19,17 +19,26 @@ export function unitPrice(price: number, unit: string): string {
 
 type ProductLike = {
   status: string;
+  availabilityMode: string;
   stockQty: number;
   leadTimeDays: number;
 };
 
+export type AvailabilityMode = "always" | "in_stock" | "made_to_order" | "unavailable";
+
 /**
  * Availability for a local product, optionally judged against a pickup date.
  *
- * Two supply models share one field set: shelf stock (leadTimeDays 0 — stockQty
- * is a real on-hand count) and harvest / made-to-order (leadTimeDays > 0 — the
- * item is sourced from the farmer, so it is "available" only if the pickup date
- * is far enough out to harvest it). Returns a tone the UI maps to a colour.
+ * The supply model is an explicit `availabilityMode` the admin sets, not
+ * inferred from the numbers:
+ *   - always        → office always has it; buyable regardless of stock/date
+ *   - in_stock      → real on-hand units in stockQty
+ *   - made_to_order → sourced from the farmer; buyable only if the pickup date
+ *                     is far enough out to clear leadTimeDays
+ *   - unavailable   → temporarily off
+ *
+ * `status` is the hard on/off (an archived/hidden product) and always wins.
+ * Returns a tone the UI maps to a colour.
  */
 export function productAvailability(
   p: ProductLike,
@@ -37,17 +46,27 @@ export function productAvailability(
 ): { ok: boolean; label: string; tone: "ok" | "warn" | "off" } {
   if (p.status !== "available") return { ok: false, label: "Currently unavailable", tone: "off" };
 
-  if (p.leadTimeDays > 0) {
-    if (!pickupDate) return { ok: true, label: `Made to order · ${p.leadTimeDays}-day notice`, tone: "warn" };
-    const days = Math.ceil((new Date(pickupDate).getTime() - Date.now()) / 86_400_000);
-    return days >= p.leadTimeDays
-      ? { ok: true, label: "Can be ready for your visit", tone: "ok" }
-      : { ok: false, label: `Needs ${p.leadTimeDays}-day notice`, tone: "off" };
-  }
+  switch (p.availabilityMode) {
+    case "unavailable":
+      return { ok: false, label: "Currently unavailable", tone: "off" };
 
-  if (p.stockQty <= 0) return { ok: false, label: "Out of stock", tone: "off" };
-  if (p.stockQty <= 5) return { ok: true, label: `Only ${p.stockQty} left`, tone: "warn" };
-  return { ok: true, label: "In stock", tone: "ok" };
+    case "always":
+      return { ok: true, label: "Available anytime", tone: "ok" };
+
+    case "made_to_order": {
+      if (!pickupDate) return { ok: true, label: `Made to order · ${p.leadTimeDays}-day notice`, tone: "warn" };
+      const days = Math.ceil((new Date(pickupDate).getTime() - Date.now()) / 86_400_000);
+      return days >= p.leadTimeDays
+        ? { ok: true, label: "Made to order — ready for your visit", tone: "ok" }
+        : { ok: false, label: `Needs ${p.leadTimeDays}-day notice — too late`, tone: "off" };
+    }
+
+    case "in_stock":
+    default:
+      if (p.stockQty <= 0) return { ok: false, label: "Out of stock", tone: "off" };
+      if (p.stockQty <= 5) return { ok: true, label: `Only ${p.stockQty} left`, tone: "warn" };
+      return { ok: true, label: "In stock", tone: "ok" };
+  }
 }
 
 export function isoDate(d: Date | string): string {

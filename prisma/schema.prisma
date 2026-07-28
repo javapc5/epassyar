@@ -375,10 +375,14 @@ model LocalProduct {
   price     Float  @default(0) // price per unit shown to the tourist
   costPrice Float  @default(0) // what the office pays the farmer (margin = policy)
 
-  // Availability. leadTimeDays 0 = shelf stock (stockQty is a real count);
-  // > 0 = harvest / made-to-order (availability is judged against the pickup date).
-  stockQty     Float @default(0)
-  leadTimeDays Int   @default(0)
+  // Availability model — explicit, not inferred. The admin picks one:
+  //   always     → office always has it; no counting (stockQty/leadTimeDays ignored)
+  //   in_stock   → real countable units in stockQty
+  //   made_to_order → sourced from the farmer; ready only if the pickup date clears leadTimeDays
+  //   unavailable → temporarily off (distinct from status, which is the hard on/off)
+  availabilityMode String @default("in_stock")
+  stockQty         Float  @default(0) // used when availabilityMode = in_stock
+  leadTimeDays     Int    @default(0) // used when availabilityMode = made_to_order
 
   // Showcase / trending on the products page.
   isFeatured   Boolean @default(false)
