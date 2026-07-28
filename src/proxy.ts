@@ -1,15 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { AUTH_SECRET } from "@/lib/secrets";
 
 /**
- * Route gate for the Tourism Office admin. Runs on the edge and verifies the
- * signed session cookie WITHOUT a database call (Web Crypto HMAC — same secret
+ * Route gate for the Tourism Office admin (Next's "proxy" convention, formerly
+ * "middleware"). Runs on the edge and verifies the signed session cookie
+ * WITHOUT a database call (Web Crypto HMAC — same secret
  * and algorithm the Node side uses in src/lib/auth.ts). Unauthenticated:
  *   - /admin/*      → redirect to /login
  *   - /api/admin/*  → 401 JSON
  */
 
 const SESSION_COOKIE = "bagulin_session";
-const SECRET = process.env.AUTH_SECRET ?? "bagulin-auth-dev-change-me-in-prod";
+const SECRET = AUTH_SECRET;
 
 async function hmacHex(data: string): Promise<string> {
   const enc = new TextEncoder();
@@ -27,7 +29,7 @@ async function isValidSession(token: string | undefined): Promise<boolean> {
   return (await hmacHex(`${id}.${role}.${exp}`)) === sig;
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const token = req.cookies.get(SESSION_COOKIE)?.value;
   const ok = await isValidSession(token);
   if (ok) return NextResponse.next();
