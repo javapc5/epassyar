@@ -22,6 +22,12 @@ tsconfig.tsbuildinfo
 # user-uploaded files — store in cloud storage (Cloudinary / S3) in production
 public/uploads/
 
+# local QA / screenshot scripts — throwaway, hardcoded absolute paths
+/check-mobile.js
+/check-pages.js
+/page-checks/
+/mobile-screenshots/
+
 # misc
 .DS_Store
 docs/screenshots/*.tmp
