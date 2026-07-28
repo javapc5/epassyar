@@ -31,6 +31,7 @@ model Municipality {
   heroTransition          String   @default("fade") // fade | slide | zoom
   heroTransitionMs        Int      @default(700) // cross-fade / slide speed
   heroCaptionsEnabled     Boolean  @default(true) // show per-slide captions on the banner
+  heroLogoEnabled         Boolean  @default(true) // show the LGU logo as an official seal on the home banner
   gcashName               String? // account holder shown to tourists
   gcashNumber             String? // 09xx number tourists send to
   gcashQrUrl              String? // uploaded QR image (/uploads/...)

@@ -22,6 +22,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import HeroCarousel from "@/components/HeroCarousel";
 import { DestinationCard, PackageCard } from "@/components/cards";
+import { isMediaUrl } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -69,6 +70,22 @@ export default async function HomePage() {
           )}
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/15 to-transparent" />
+
+        {/* Official LGU seal — shown only when a logo is uploaded AND enabled in
+            admin settings. Sits centered near the top of the banner. */}
+        {muni?.heroLogoEnabled && isMediaUrl(muni?.logoUrl) && (
+          <div className="pointer-events-none absolute inset-x-0 top-5 z-10 flex justify-center sm:top-7">
+            <div className="glass flex h-20 w-20 items-center justify-center rounded-full p-2 shadow-pop ring-1 ring-white/40 sm:h-24 sm:w-24">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={muni!.logoUrl!}
+                alt={`${muni?.name ?? "Municipality"} official seal`}
+                className="h-full w-full object-contain drop-shadow"
+              />
+            </div>
+          </div>
+        )}
+
         <div className="relative flex min-h-[430px] flex-col justify-center py-12 sm:py-14">
           <div className="wrap reveal">
             <span className="glass mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-white">

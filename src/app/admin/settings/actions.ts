@@ -22,6 +22,7 @@ export async function saveBranding(formData: FormData) {
       contactNumber: String(formData.get("contactNumber") ?? "").trim() || null,
       email: String(formData.get("email") ?? "").trim() || null,
       address: String(formData.get("address") ?? "").trim() || null,
+      heroLogoEnabled: formData.get("heroLogoEnabled") === "on",
       ...(logo ? { logoUrl: logo } : {}),
     },
   });

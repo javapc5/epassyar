@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { MountainsIcon, PhoneIcon, EnvelopeSimpleIcon } from "@phosphor-icons/react/dist/ssr";
+import { PhoneIcon, EnvelopeSimpleIcon } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
 import { TopoLines } from "./decor/NatureDecor";
-import { isMediaUrl } from "@/lib/format";
+import EpassyarMark from "./EpassyarMark";
 
 const EXPLORE = [
   { href: "/destinations", label: "Destinations" },
@@ -24,7 +24,6 @@ const OFFICE = [
 export default async function SiteFooter() {
   const muni = await prisma.municipality.findUnique({ where: { id: 1 } });
   const name = muni?.name ?? "Bagulin";
-  const logo = isMediaUrl(muni?.logoUrl) ? muni!.logoUrl : null;
 
   return (
     <footer className="relative mt-14 overflow-hidden bg-canopy text-[#bcd9bd]">
@@ -34,14 +33,7 @@ export default async function SiteFooter() {
         {/* Brand */}
         <div className="col-span-2 lg:col-span-1">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white">
-              {logo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={logo} alt="" className="h-5 w-5 object-contain" />
-              ) : (
-                <MountainsIcon size={17} weight="duotone" />
-              )}
-            </span>
+            <EpassyarMark size={32} className="shrink-0 shadow-sm" />
             <div className="leading-tight">
               <div className="font-display text-[13.5px] font-bold text-white">
                 <span className="text-cta-400">e</span>Passyar

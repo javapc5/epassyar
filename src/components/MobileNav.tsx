@@ -5,14 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ListIcon, XIcon } from "@phosphor-icons/react";
 
+// Overflow menu only — the bottom tab bar already covers Home, Explore
+// (Destinations), Products and My Trip (My Booking), and the "Plan a Visit"
+// CTA below covers /build. These are the secondary pages that have nowhere
+// else to live on mobile.
 const NAV = [
-  { href: "/destinations", label: "Destinations" },
   { href: "/packages", label: "Tour Packages" },
   { href: "/guides", label: "Tour Guides" },
-  { href: "/my-booking", label: "My Booking" },
-  { href: "/build", label: "Build Itinerary" },
   { href: "/stay", label: "Where to Stay" },
-  { href: "/products", label: "Local Products" },
 ];
 
 export default function MobileNav() {

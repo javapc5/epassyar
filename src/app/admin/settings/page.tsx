@@ -55,6 +55,10 @@ export default async function AdminSettings() {
             <Field label="Logo" hint="Transparent PNG supported — appears in the site header, footer, and admin sidebar.">
               <ImageCropUpload name="logoPath" mode="logo" initial={muni?.logoUrl} buttonLabel="Upload logo (PNG with transparency OK)" />
             </Field>
+            <label className="flex items-center gap-2.5 text-sm font-semibold text-ink-700">
+              <input type="checkbox" name="heroLogoEnabled" defaultChecked={muni?.heroLogoEnabled ?? true} className="h-4 w-4 accent-brand-700" />
+              Show the logo as an official seal on the home banner
+            </label>
             <button className="btn btn-green w-fit">Save branding</button>
           </FormCard>
         </form>
