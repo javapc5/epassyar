@@ -75,14 +75,12 @@ export default async function HomePage() {
             admin settings. Sits centered near the top of the banner. */}
         {muni?.heroLogoEnabled && isMediaUrl(muni?.logoUrl) && (
           <div className="pointer-events-none absolute inset-x-0 top-5 z-10 flex justify-center sm:top-7">
-            <div className="glass flex h-20 w-20 items-center justify-center rounded-full p-2 shadow-pop ring-1 ring-white/40 sm:h-24 sm:w-24">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={muni!.logoUrl!}
-                alt={`${muni?.name ?? "Municipality"} official seal`}
-                className="h-full w-full object-contain drop-shadow"
-              />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={muni!.logoUrl!}
+              alt={`${muni?.name ?? "Municipality"} official seal`}
+              className="h-20 w-20 object-contain drop-shadow-lg sm:h-24 sm:w-24"
+            />
           </div>
         )}
 
