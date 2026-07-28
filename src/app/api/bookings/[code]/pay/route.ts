@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, clientIpFrom } from "@/lib/rate-limit";
 import { dispatchQueuedSms } from "@/lib/sms";
 
 /**
@@ -11,9 +12,21 @@ import { dispatchQueuedSms } from "@/lib/sms";
  */
 export async function POST(req: Request, { params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
+
+  // Submitting a reference flips the booking to payment_review and texts the
+  // tourist, so cap how often one connection can do it.
+  const ip = clientIpFrom(req);
+  const limit = rateLimit(`pay:${ip}`, 10, 15 * 60 * 1000);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please wait a few minutes and try again." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
+    );
+  }
+
   const body = await req.json().catch(() => ({}));
   const refNo = String(body.refNo ?? "").replace(/\s+/g, "");
-  const senderName = String(body.senderName ?? "").trim();
+  const senderName = String(body.senderName ?? "").trim().slice(0, 120);
 
   if (!/^\d{9,13}$/.test(refNo)) {
     return NextResponse.json({ error: "Please enter the GCash reference number (9–13 digits, on your receipt)." }, { status: 400 });

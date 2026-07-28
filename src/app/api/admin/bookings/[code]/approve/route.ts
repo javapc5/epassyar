@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/auth";
 import { signPass } from "@/lib/qr";
 import { shortDate } from "@/lib/format";
 import { dispatchQueuedSms } from "@/lib/sms";
 
 export async function POST(req: Request, { params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
-  const { action, guideIds = [] } = await req.json();
+
+  const staff = await getSessionUser();
+  if (!staff) return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+
+  const body = await req.json().catch(() => ({}));
+  const { action, guideIds = [] } = body;
 
   const booking = await prisma.booking.findUnique({
     where: { bookingCode: code },
@@ -20,7 +26,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ code: s
   if (action === "reject") {
     await prisma.$transaction([
       prisma.booking.update({ where: { id: booking.id }, data: { status: "cancelled", cancelReason: "Rejected by Tourism Office" } }),
-      prisma.bookingStatusLog.create({ data: { bookingId: booking.id, fromStatus: "pending_approval", toStatus: "cancelled", note: "Rejected by Tourism Office" } }),
+      prisma.bookingStatusLog.create({ data: { bookingId: booking.id, fromStatus: "pending_approval", toStatus: "cancelled", note: `Rejected by ${staff.fullName}` } }),
       prisma.smsLog.create({ data: { bookingId: booking.id, recipientMobile: booking.touristMobile, recipientType: "tourist", template: "BOOKING_REJECTED", message: `Bagulin Tourism: We're sorry, booking ${code} could not be approved. Your reservation fee will be refunded.` } }),
     ]);
     await dispatchQueuedSms(booking.id);
@@ -46,7 +52,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ code: s
       data: ids.map((guideId) => ({ bookingId: booking.id, guideId, dutyDate: booking.visitDate, status: "notified", notifiedAt: new Date() })),
     }),
     prisma.qrPass.create({ data: { bookingId: booking.id, token } }),
-    prisma.bookingStatusLog.create({ data: { bookingId: booking.id, fromStatus: "pending_approval", toStatus: "approved", note: `Approved; ${ids.length} guide(s) assigned` } }),
+    prisma.bookingStatusLog.create({ data: { bookingId: booking.id, fromStatus: "pending_approval", toStatus: "approved", note: `Approved by ${staff.fullName}; ${ids.length} guide(s) assigned` } }),
     prisma.smsLog.create({ data: { bookingId: booking.id, recipientMobile: booking.touristMobile, recipientType: "tourist", template: "BOOKING_APPROVED", message: `Bagulin Tourism: APPROVED! Booking ${code} for ${shortDate(booking.visitDate)}. Show your QR pass on arrival. Balance PHP ${booking.totalAmount - booking.amountPaid} payable on-site.` } }),
     ...guides.map((g) =>
       prisma.smsLog.create({

@@ -4,11 +4,16 @@ import { peso } from "@/lib/format";
 import { Field, TextInput, TextArea, Select, FormCard } from "@/components/admin/FormBits";
 import ImageCropUpload from "@/components/admin/ImageCropUpload";
 import HeroBannerManager from "@/components/admin/HeroBannerManager";
+import { requireRole, MANAGER_ROLES } from "@/lib/auth";
 import { saveFees, saveGcash, saveExpiry, saveBranding, saveHeroAppearance, addTransportRoute, toggleTransportRoute } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettings() {
+  // Fees and the GCash payout account live here — restricted to managers so a
+  // front-desk or guide account cannot redirect where tourists send money.
+  await requireRole(MANAGER_ROLES);
+
   const [muni, fees, routes] = await Promise.all([
     prisma.municipality.findUnique({ where: { id: 1 } }),
     prisma.feeSetting.findMany({ where: { municipalityId: 1 } }),

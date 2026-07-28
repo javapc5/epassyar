@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { hasBookingAccess } from "@/lib/booking-access";
+import { getSessionUser } from "@/lib/auth";
 import { peso, shortDate, statusMeta } from "@/lib/format";
 import { qrDataUrl, checkInUrl } from "@/lib/qr";
 import SiteHeader from "@/components/SiteHeader";
@@ -14,6 +16,16 @@ export const dynamic = "force-dynamic";
 
 export default async function BookingPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
+
+  // This page carries tourist PII and the QR pass, so the reference code alone is
+  // not enough to open it. Access comes from submitting the booking or clearing
+  // the /my-booking check (code + last 4 digits of the mobile on file). Signed-in
+  // Tourism Office staff are let through so they can open a link a tourist sends.
+  const [entitled, staff] = await Promise.all([hasBookingAccess(code), getSessionUser()]);
+  if (!entitled && !staff) {
+    redirect(`/my-booking?code=${encodeURIComponent(code)}&verify=1`);
+  }
+
   const [booking, muni] = await Promise.all([
     prisma.booking.findUnique({
       where: { bookingCode: code },

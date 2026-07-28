@@ -28,12 +28,8 @@ export function parseList(value: string | null | undefined): string[] {
   }
 }
 
-export function bookingCode(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let s = "";
-  for (let i = 0; i < 6; i++) s += chars[Math.floor(Math.random() * chars.length)];
-  return "BGL-" + s;
-}
+// bookingCode() lives in src/lib/booking-code.ts — it needs node:crypto, and
+// this module is imported by client components.
 
 const STATUS_META: Record<string, { label: string; className: string }> = {
   pending_payment: { label: "Awaiting payment", className: "bg-amber-100 text-amber-800" },

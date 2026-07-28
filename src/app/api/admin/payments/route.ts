@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/auth";
 import { dispatchQueuedSms } from "@/lib/sms";
 
 /**
@@ -9,6 +10,10 @@ import { dispatchQueuedSms } from "@/lib/sms";
  * - { action: "treasurer", bookingCode, orNumber } → record a cash payment at the Treasurer's Office
  */
 export async function POST(req: Request) {
+  // This endpoint moves bookings to "paid" — never leave it to middleware alone.
+  const staff = await getSessionUser();
+  if (!staff) return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+
   const body = await req.json().catch(() => ({}));
   const action = String(body.action ?? "");
 
@@ -26,7 +31,7 @@ export async function POST(req: Request) {
           data: { amountPaid: b.amountPaid + payment.amount, status: "pending_approval" },
         }),
         prisma.bookingStatusLog.create({
-          data: { bookingId: b.id, fromStatus: b.status, toStatus: "pending_approval", note: `GCash payment verified (ref ${payment.gatewayRef})` },
+          data: { bookingId: b.id, fromStatus: b.status, toStatus: "pending_approval", note: `GCash payment verified by ${staff.fullName} (ref ${payment.gatewayRef})` },
         }),
         prisma.smsLog.create({
           data: {
@@ -43,7 +48,7 @@ export async function POST(req: Request) {
       prisma.payment.update({ where: { id: payment.id }, data: { status: "failed" } }),
       prisma.booking.update({ where: { id: b.id }, data: { status: "pending_payment" } }),
       prisma.bookingStatusLog.create({
-        data: { bookingId: b.id, fromStatus: b.status, toStatus: "pending_payment", note: `GCash ref ${payment.gatewayRef} could not be verified — tourist asked to re-check` },
+        data: { bookingId: b.id, fromStatus: b.status, toStatus: "pending_payment", note: `GCash ref ${payment.gatewayRef} could not be verified by ${staff.fullName} — tourist asked to re-check` },
       }),
       prisma.smsLog.create({
         data: {
@@ -77,7 +82,7 @@ export async function POST(req: Request) {
         data: { amountPaid: booking.amountPaid + booking.reservationDue, status: "pending_approval" },
       }),
       prisma.bookingStatusLog.create({
-        data: { bookingId: booking.id, fromStatus: booking.status, toStatus: "pending_approval", note: `Cash payment recorded at Treasurer's Office (OR ${orNumber})` },
+        data: { bookingId: booking.id, fromStatus: booking.status, toStatus: "pending_approval", note: `Cash payment recorded at Treasurer's Office by ${staff.fullName} (OR ${orNumber})` },
       }),
       prisma.smsLog.create({
         data: {

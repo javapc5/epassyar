@@ -70,11 +70,16 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               />
             </label>
 
-            {e && (
+            {e === "rate" ? (
+              <div role="alert" className="flex items-start gap-1.5 rounded-btn bg-red-50 px-3 py-2 text-xs font-semibold text-danger">
+                <WarningCircleIcon size={15} weight="fill" className="mt-px shrink-0" />
+                Too many sign-in attempts. Please wait about 15 minutes before trying again.
+              </div>
+            ) : e ? (
               <div role="alert" className="flex items-center gap-1.5 rounded-btn bg-red-50 px-3 py-2 text-xs font-semibold text-danger">
                 <WarningCircleIcon size={15} weight="fill" /> Incorrect email or password.
               </div>
-            )}
+            ) : null}
 
             <button type="submit" className="btn btn-green mt-1 w-full">
               <SignInIcon size={17} weight="bold" /> Sign in

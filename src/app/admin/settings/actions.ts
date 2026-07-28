@@ -2,12 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/auth";
+import { requireRole, MANAGER_ROLES } from "@/lib/auth";
 
 const MUNICIPALITY_ID = 1;
 
+// Every action in this file is manager-only. Server actions are addressable by
+// action id independently of the page they were rendered on, so gating
+// settings/page.tsx is not by itself enough — each action re-checks the role.
+
 export async function saveBranding(formData: FormData) {
-  await requireUser();
+  await requireRole(MANAGER_ROLES);
   const logo = String(formData.get("logoPath") ?? "").trim() || null;
   await prisma.municipality.update({
     where: { id: MUNICIPALITY_ID },
@@ -25,7 +29,7 @@ export async function saveBranding(formData: FormData) {
 }
 
 export async function saveFees(formData: FormData) {
-  await requireUser();
+  await requireRole(MANAGER_ROLES);
   const updates: { feeCode: string; amount: number }[] = [
     { feeCode: "ENVIRONMENTAL", amount: Number(formData.get("environmental") ?? 0) || 0 },
     { feeCode: "INSURANCE", amount: Number(formData.get("insurance") ?? 0) || 0 },
@@ -42,7 +46,7 @@ export async function saveFees(formData: FormData) {
 }
 
 export async function saveGcash(formData: FormData) {
-  await requireUser();
+  await requireRole(MANAGER_ROLES);
   const qr = String(formData.get("qrPath") ?? "").trim() || null;
   await prisma.municipality.update({
     where: { id: MUNICIPALITY_ID },
@@ -56,7 +60,7 @@ export async function saveGcash(formData: FormData) {
 }
 
 export async function saveHeroAppearance(formData: FormData) {
-  await requireUser();
+  await requireRole(MANAGER_ROLES);
   const transition = String(formData.get("heroTransition") ?? "fade");
   const allowed = new Set(["fade", "slide", "zoom"]);
   // The form field is entered in seconds; store milliseconds.
@@ -75,7 +79,7 @@ export async function saveHeroAppearance(formData: FormData) {
 }
 
 export async function saveExpiry(formData: FormData) {
-  await requireUser();
+  await requireRole(MANAGER_ROLES);
   await prisma.municipality.update({
     where: { id: MUNICIPALITY_ID },
     data: { reservationExpiryHours: Math.max(1, Number(formData.get("hours") ?? 24) || 24) },
@@ -84,7 +88,7 @@ export async function saveExpiry(formData: FormData) {
 }
 
 export async function addTransportRoute(formData: FormData) {
-  await requireUser();
+  await requireRole(MANAGER_ROLES);
   const routeName = String(formData.get("routeName") ?? "").trim();
   if (!routeName) return;
   const feePerPax = Number(formData.get("feePerPax") ?? 0) || null;
@@ -104,7 +108,7 @@ export async function addTransportRoute(formData: FormData) {
 }
 
 export async function toggleTransportRoute(formData: FormData) {
-  await requireUser();
+  await requireRole(MANAGER_ROLES);
   const id = Number(formData.get("id"));
   const route = await prisma.transportRoute.findUnique({ where: { id } });
   if (!route) return;

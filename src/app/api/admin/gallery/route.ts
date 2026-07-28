@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/auth";
 
 const MAX_PHOTOS = 10;
 const ENTITY_TYPES = new Set(["destination", "guide", "accommodation", "hero"]);
 
+/** Every handler in this file is staff-only; middleware is the outer gate. */
+async function denyIfAnonymous() {
+  return (await getSessionUser()) ? null : NextResponse.json({ error: "Authentication required." }, { status: 401 });
+}
+
 export async function GET(req: Request) {
+  const denied = await denyIfAnonymous();
+  if (denied) return denied;
+
   const { searchParams } = new URL(req.url);
   const entityType = String(searchParams.get("entityType") ?? "");
   const entityId = Number(searchParams.get("entityId"));
@@ -19,6 +28,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const denied = await denyIfAnonymous();
+  if (denied) return denied;
+
   const body = await req.json().catch(() => ({}));
   const entityType = String(body.entityType ?? "");
   const entityId = Number(body.entityId);
@@ -46,6 +58,9 @@ export async function POST(req: Request) {
 
 /** Update a slide's caption (and, if provided, its sort order). */
 export async function PATCH(req: Request) {
+  const denied = await denyIfAnonymous();
+  if (denied) return denied;
+
   const body = await req.json().catch(() => ({}));
   const id = Number(body.id);
   if (!id) return NextResponse.json({ error: "Missing id." }, { status: 400 });
@@ -60,6 +75,9 @@ export async function PATCH(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const denied = await denyIfAnonymous();
+  if (denied) return denied;
+
   const { searchParams } = new URL(req.url);
   const id = Number(searchParams.get("id"));
   if (!id) return NextResponse.json({ error: "Missing id." }, { status: 400 });

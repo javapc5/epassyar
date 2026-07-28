@@ -1,10 +1,7 @@
 import crypto from "crypto";
 import QRCode from "qrcode";
 
-const SECRET = process.env.QR_SIGNING_SECRET ?? "bagulin-qr-dev-change-me-in-prod";
-if (process.env.NODE_ENV === "production" && SECRET === "bagulin-qr-dev-change-me-in-prod") {
-  throw new Error("QR_SIGNING_SECRET env var must be set in production.");
-}
+import { QR_SECRET as SECRET } from "@/lib/secrets";
 
 /** Builds the check-in URL a scanned tourist pass points at (staff-gated). */
 export function checkInUrl(origin: string, token: string): string {

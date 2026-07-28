@@ -1,6 +1,44 @@
 import { PrismaClient } from "@prisma/client";
+import crypto from "crypto";
+import { promisify } from "util";
 
 const db = new PrismaClient();
+
+const scryptAsync = promisify(crypto.scrypt) as (
+  password: string,
+  salt: string,
+  keylen: number,
+  options: crypto.ScryptOptions,
+) => Promise<Buffer>;
+
+/**
+ * Mirrors hashPassword() in src/lib/auth.ts. Duplicated rather than imported
+ * because the seed runs through tsx outside the Next.js module graph (the "@/"
+ * alias is not resolvable here). Keep the parameters in sync with SCRYPT_OPTS.
+ */
+async function hashPassword(password: string): Promise<string> {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const opts: crypto.ScryptOptions = { N: 32768, r: 8, p: 3, maxmem: 96 * 1024 * 1024 };
+  const hash = (await scryptAsync(password, salt, 32, opts)).toString("hex");
+  return `scrypt2:${salt}:${hash}`;
+}
+
+/**
+ * Seed passwords come from the environment. When a variable is missing we mint a
+ * random one and print it once — so a seeded database never contains a password
+ * that is guessable from this repository.
+ */
+const generated: string[] = [];
+function seedPassword(envVar: string, label: string): string {
+  const fromEnv = process.env[envVar];
+  if (fromEnv && fromEnv.length >= 12) return fromEnv;
+  if (fromEnv) {
+    throw new Error(`${envVar} is too short — use at least 12 characters.`);
+  }
+  const password = crypto.randomBytes(12).toString("base64url");
+  generated.push(`  ${label}: ${password}`);
+  return password;
+}
 
 async function main() {
   console.log("Seeding Bagulin Smart Tourism database...");
@@ -41,7 +79,11 @@ async function main() {
     },
   });
 
-  // Admin + staff accounts (demo password hash placeholder — replace with bcrypt in prod)
+  // Admin + staff accounts. Passwords are scrypt-hashed; set SEED_ADMIN_PASSWORD
+  // and SEED_CASHIER_PASSWORD to choose them, otherwise random ones are printed.
+  const adminPassword = seedPassword("SEED_ADMIN_PASSWORD", "admin@bagulin.gov.ph");
+  const cashierPassword = seedPassword("SEED_CASHIER_PASSWORD", "cashier@bagulin.gov.ph");
+
   await db.user.createMany({
     data: [
       {
@@ -49,7 +91,7 @@ async function main() {
         fullName: "Tourism Administrator",
         email: "admin@bagulin.gov.ph",
         mobile: "09170000001",
-        passwordHash: "demo:admin123",
+        passwordHash: await hashPassword(adminPassword),
         role: "TOURISM_ADMIN",
       },
       {
@@ -57,7 +99,7 @@ async function main() {
         fullName: "Treasury Cashier",
         email: "cashier@bagulin.gov.ph",
         mobile: "09170000002",
-        passwordHash: "demo:cashier123",
+        passwordHash: await hashPassword(cashierPassword),
         role: "STAFF",
       },
     ],
@@ -298,6 +340,12 @@ async function main() {
   const guideCount = await db.tourGuide.count();
   const destCount = await db.destination.count();
   console.log(`Seeded: ${destCount} destinations, ${guideCount} guides, 3 packages, 4 products, 2 accommodations.`);
+
+  if (generated.length > 0) {
+    console.log("\n─── Generated staff passwords — copy them now, they are not stored anywhere ───");
+    console.log(generated.join("\n"));
+    console.log("Set SEED_ADMIN_PASSWORD / SEED_CASHIER_PASSWORD to choose your own instead.\n");
+  }
 }
 
 main()
