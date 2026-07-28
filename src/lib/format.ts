@@ -12,6 +12,44 @@ export function shortDate(d: Date | string): string {
   return date.toLocaleDateString("en-PH", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
 }
 
+/** "₱180 / kilo" style price label for a local product. */
+export function unitPrice(price: number, unit: string): string {
+  return `${peso(price)} / ${unit}`;
+}
+
+type ProductLike = {
+  status: string;
+  stockQty: number;
+  leadTimeDays: number;
+};
+
+/**
+ * Availability for a local product, optionally judged against a pickup date.
+ *
+ * Two supply models share one field set: shelf stock (leadTimeDays 0 — stockQty
+ * is a real on-hand count) and harvest / made-to-order (leadTimeDays > 0 — the
+ * item is sourced from the farmer, so it is "available" only if the pickup date
+ * is far enough out to harvest it). Returns a tone the UI maps to a colour.
+ */
+export function productAvailability(
+  p: ProductLike,
+  pickupDate?: Date | string | null,
+): { ok: boolean; label: string; tone: "ok" | "warn" | "off" } {
+  if (p.status !== "available") return { ok: false, label: "Currently unavailable", tone: "off" };
+
+  if (p.leadTimeDays > 0) {
+    if (!pickupDate) return { ok: true, label: `Made to order · ${p.leadTimeDays}-day notice`, tone: "warn" };
+    const days = Math.ceil((new Date(pickupDate).getTime() - Date.now()) / 86_400_000);
+    return days >= p.leadTimeDays
+      ? { ok: true, label: "Can be ready for your visit", tone: "ok" }
+      : { ok: false, label: `Needs ${p.leadTimeDays}-day notice`, tone: "off" };
+  }
+
+  if (p.stockQty <= 0) return { ok: false, label: "Out of stock", tone: "off" };
+  if (p.stockQty <= 5) return { ok: true, label: `Only ${p.stockQty} left`, tone: "warn" };
+  return { ok: true, label: "In stock", tone: "ok" };
+}
+
 export function isoDate(d: Date | string): string {
   const date = typeof d === "string" ? new Date(d) : d;
   return date.toISOString().slice(0, 10);

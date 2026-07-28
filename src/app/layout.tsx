@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
 import "./globals.css";
 import PageProgress from "@/components/PageProgress";
+import BottomTabBar from "@/components/BottomTabBar";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -34,7 +35,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${bricolage.variable} ${inter.variable}`}>
       <body>
         <PageProgress />
-        {children}
+        {/* pb clears the fixed mobile tab bar; removed at lg where it's hidden */}
+        <div className="pb-16 lg:pb-0">{children}</div>
+        <BottomTabBar />
       </body>
     </html>
   );

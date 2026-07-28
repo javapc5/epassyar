@@ -10,6 +10,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import PayPanel from "./PayPanel";
 import StatusTracker from "./StatusTracker";
+import BookingAddOns from "./BookingAddOns";
 import { SealCheckIcon } from "@phosphor-icons/react/dist/ssr";
 
 export const dynamic = "force-dynamic";
@@ -150,6 +151,11 @@ export default async function BookingPage({ params }: { params: Promise<{ code: 
             </div>
           )}
         </div>
+
+        {/* Soft product endorsement — hidden once the trip is over or called off */}
+        {!["cancelled", "expired", "completed"].includes(booking.status) && (
+          <BookingAddOns municipalityId={booking.municipalityId} visitDate={booking.visitDate} />
+        )}
 
         <div className="mt-4 text-center text-sm text-ink-600">
           Track this booking anytime at <Link href="/my-booking" className="font-semibold text-brand-700 hover:underline">My Booking</Link>.

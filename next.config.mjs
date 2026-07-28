@@ -10,10 +10,16 @@
  *
  * img-src allows Cloudinary (the media store) plus data:/blob: for the QR pass
  * data-URI and the client-side image cropper preview.
+ *
+ * 'unsafe-eval' is added in development only: `next dev` (React's error overlay,
+ * Fast Refresh diagnostics) relies on eval, which the production policy must not
+ * allow. React never uses eval in a production build, so nothing is lost there.
  */
+const isDev = process.env.NODE_ENV !== "production";
+
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://res.cloudinary.com",
   "media-src 'self' https://res.cloudinary.com",

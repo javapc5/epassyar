@@ -8,6 +8,7 @@ const NAV = [
   { href: "/destinations", label: "Destinations" },
   { href: "/packages", label: "Tour Packages" },
   { href: "/guides", label: "Tour Guides" },
+  { href: "/products", label: "Local Products" },
   { href: "/my-booking", label: "My Booking" },
 ];
 

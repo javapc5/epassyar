@@ -31,20 +31,20 @@ model Municipality {
   heroTransition          String   @default("fade") // fade | slide | zoom
   heroTransitionMs        Int      @default(700) // cross-fade / slide speed
   heroCaptionsEnabled     Boolean  @default(true) // show per-slide captions on the banner
-  gcashName               String?  // account holder shown to tourists
-  gcashNumber             String?  // 09xx number tourists send to
-  gcashQrUrl              String?  // uploaded QR image (/uploads/...)
+  gcashName               String? // account holder shown to tourists
+  gcashNumber             String? // 09xx number tourists send to
+  gcashQrUrl              String? // uploaded QR image (/uploads/...)
   status                  String   @default("active")
   createdAt               DateTime @default(now())
 
-  destinations   Destination[]
-  guides         TourGuide[]
-  packages       TourPackage[]
-  users          User[]
-  feeSettings    FeeSetting[]
-  bookings       Booking[]
-  products       LocalProduct[]
-  accommodations Accommodation[]
+  destinations    Destination[]
+  guides          TourGuide[]
+  packages        TourPackage[]
+  users           User[]
+  feeSettings     FeeSetting[]
+  bookings        Booking[]
+  products        LocalProduct[]
+  accommodations  Accommodation[]
   transportRoutes TransportRoute[]
 }
 
@@ -120,7 +120,7 @@ model TourGuide {
   status          String   @default("active")
   createdAt       DateTime @default(now())
 
-  municipality   Municipality      @relation(fields: [municipalityId], references: [id])
+  municipality   Municipality         @relation(fields: [municipalityId], references: [id])
   availability   GuideAvailability[]
   assignments    GuideAssignment[]
   certifications GuideCertification[]
@@ -210,8 +210,8 @@ model TransportRoute {
 }
 
 model Booking {
-  id               Int      @id @default(autoincrement())
-  bookingCode      String   @unique
+  id               Int       @id @default(autoincrement())
+  bookingCode      String    @unique
   municipalityId   Int
   bookingType      String // custom | package
   packageId        Int?
@@ -219,27 +219,27 @@ model Booking {
   touristMobile    String
   touristEmail     String?
   touristOrigin    String?
-  touristCountry   String   @default("Philippines")
+  touristCountry   String    @default("Philippines")
   validIdType      String?
-  paxAdults        Int      @default(1)
-  paxChildren      Int      @default(0)
+  paxAdults        Int       @default(1)
+  paxChildren      Int       @default(0)
   visitDate        DateTime
-  durationDays     Int      @default(1)
-  needsTransport   Boolean  @default(false)
+  durationDays     Int       @default(1)
+  needsTransport   Boolean   @default(false)
   transportRouteId Int?
-  baggageKg        Float    @default(0) // approx. extra baggage weight — helps the guide plan
+  baggageKg        Float     @default(0) // approx. extra baggage weight — helps the guide plan
   baggageNotes     String?
   specialRequests  String?
   totalAmount      Float
   reservationDue   Float
-  amountPaid       Float    @default(0)
-  status           String   @default("pending_payment")
+  amountPaid       Float     @default(0)
+  status           String    @default("pending_payment")
   // pending_payment | pending_approval | approved | checked_in | completed | cancelled | expired
   expiresAt        DateTime?
   approvedById     Int?
   approvedAt       DateTime?
   cancelReason     String?
-  createdAt        DateTime @default(now())
+  createdAt        DateTime  @default(now())
 
   municipality   Municipality         @relation(fields: [municipalityId], references: [id])
   tourPackage    TourPackage?         @relation(fields: [packageId], references: [id])
@@ -265,23 +265,23 @@ model BookingDestination {
 }
 
 model BookingFee {
-  id        Int    @id @default(autoincrement())
-  bookingId Int
-  feeCode   String // ENTRANCE | ENVIRONMENTAL | GUIDE | TRANSPORT | INSURANCE
-  label     String
-  quantity  Int    @default(1)
+  id         Int    @id @default(autoincrement())
+  bookingId  Int
+  feeCode    String // ENTRANCE | ENVIRONMENTAL | GUIDE | TRANSPORT | INSURANCE
+  label      String
+  quantity   Int    @default(1)
   unitAmount Float
-  lineTotal Float
+  lineTotal  Float
 
   booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
 model GuideAssignment {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   bookingId  Int
   guideId    Int
   dutyDate   DateTime
-  status     String   @default("assigned") // assigned | notified | confirmed | completed | declined
+  status     String    @default("assigned") // assigned | notified | confirmed | completed | declined
   notifiedAt DateTime?
 
   booking Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
@@ -301,44 +301,44 @@ model BookingStatusLog {
 }
 
 model Payment {
-  id          Int      @id @default(autoincrement())
-  bookingId   Int
-  paymentKind String // reservation | downpayment | balance
-  method      String // gcash | maya | card | treasurer_cash
-  amount      Float
-  gatewayRef  String?  // GCash 13-digit reference number (manual flow) or PSP intent id
-  senderName  String?  // name on the GCash account that sent the money
-  proofUrl    String?  // optional uploaded payment screenshot
-  orNumber    String?
-  status      String   @default("pending") // pending | paid | failed | refunded
-  paidAt      DateTime?
+  id           Int       @id @default(autoincrement())
+  bookingId    Int
+  paymentKind  String // reservation | downpayment | balance
+  method       String // gcash | maya | card | treasurer_cash
+  amount       Float
+  gatewayRef   String? // GCash 13-digit reference number (manual flow) or PSP intent id
+  senderName   String? // name on the GCash account that sent the money
+  proofUrl     String? // optional uploaded payment screenshot
+  orNumber     String?
+  status       String    @default("pending") // pending | paid | failed | refunded
+  paidAt       DateTime?
   recordedById Int?
-  createdAt   DateTime @default(now())
+  createdAt    DateTime  @default(now())
 
   booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
 model QrPass {
-  id        Int      @id @default(autoincrement())
-  bookingId Int      @unique
-  token     String   @unique
-  issuedAt  DateTime @default(now())
-  scannedAt DateTime?
+  id          Int       @id @default(autoincrement())
+  bookingId   Int       @unique
+  token       String    @unique
+  issuedAt    DateTime  @default(now())
+  scannedAt   DateTime?
   scannedById Int?
 
   booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
 model SmsLog {
-  id             Int      @id @default(autoincrement())
-  bookingId      Int?
+  id              Int       @id @default(autoincrement())
+  bookingId       Int?
   recipientMobile String
-  recipientType  String // tourist | guide | admin
-  template       String
-  message        String
-  status         String   @default("queued") // queued | sent | failed
-  sentAt         DateTime?
-  createdAt      DateTime @default(now())
+  recipientType   String // tourist | guide | admin
+  template        String
+  message         String
+  status          String    @default("queued") // queued | sent | failed
+  sentAt          DateTime?
+  createdAt       DateTime  @default(now())
 
   booking Booking? @relation(fields: [bookingId], references: [id])
 }
@@ -358,15 +358,37 @@ model GalleryImage {
 }
 
 model LocalProduct {
-  id             Int    @id @default(autoincrement())
+  id             Int     @id @default(autoincrement())
   municipalityId Int
   name           String
   category       String?
   description    String?
-  producer       String?
+  producer       String? // farmer / cooperative name (free text; a real Supplier relation is planned)
+  supplierMobile String? // contact the tourism officer can call to source the item
   whereToBuy     String?
   image          String?
-  status         String @default("available")
+
+  // Pricing & unit — "sold by" the tourist sees. Money kept as Float for now to
+  // match the rest of the schema; the planned Float→Decimal pass covers this too.
+  unit      String @default("pcs") // pcs | kilo | bundle | pack | bottle
+  price     Float  @default(0) // price per unit shown to the tourist
+  costPrice Float  @default(0) // what the office pays the farmer (margin = policy)
+
+  // Availability. leadTimeDays 0 = shelf stock (stockQty is a real count);
+  // > 0 = harvest / made-to-order (availability is judged against the pickup date).
+  stockQty     Float @default(0)
+  leadTimeDays Int   @default(0)
+
+  // Showcase / trending on the products page.
+  isFeatured   Boolean @default(false)
+  featuredRank Int     @default(0) // lower sorts first within the featured strip
+  soldCount    Int     @default(0) // fulfilled-order tally — drives "trending"
+  ratingAvg    Float   @default(0)
+  ratingCount  Int     @default(0)
+
+  status    String   @default("available")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   municipality Municipality @relation(fields: [municipalityId], references: [id])
 }
