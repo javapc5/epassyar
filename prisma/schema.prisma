@@ -47,6 +47,7 @@ model Municipality {
   products        LocalProduct[]
   accommodations  Accommodation[]
   transportRoutes TransportRoute[]
+  productOrders   ProductOrder[]
 }
 
 model User {
@@ -252,6 +253,7 @@ model Booking {
   statusLogs     BookingStatusLog[]
   qrPass         QrPass?
   smsLogs        SmsLog[]
+  productOrders  ProductOrder[]
 }
 
 model BookingDestination {
@@ -395,7 +397,8 @@ model LocalProduct {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  municipality Municipality @relation(fields: [municipalityId], references: [id])
+  municipality Municipality       @relation(fields: [municipalityId], references: [id])
+  orderItems   ProductOrderItem[]
 }
 
 model Accommodation {
@@ -412,4 +415,70 @@ model Accommodation {
   status         String  @default("active")
 
   municipality Municipality @relation(fields: [municipalityId], references: [id])
+}
+
+// Local-product checkout — deliberately separate from Booking/Payment: booking
+// fees are LGU revenue, product money is farmers' money the office is only
+// collecting on their behalf. Linked to a booking via bookingId only.
+model ProductOrder {
+  id             Int       @id @default(autoincrement())
+  orderCode      String    @unique // "{bookingCode}-P{n}"
+  bookingId      Int
+  municipalityId Int
+  pickupDate     DateTime // = booking.visitDate at checkout time
+  pickupMethod   String    @default("office") // office | meetup (no UI to change it yet)
+  totalAmount    Float
+  amountPaid     Float     @default(0)
+  status         String    @default("pending_payment")
+  // pending_payment | payment_review | paid | ready_for_pickup | picked_up | cancelled | expired
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+
+  booking      Booking                 @relation(fields: [bookingId], references: [id])
+  municipality Municipality            @relation(fields: [municipalityId], references: [id])
+  items        ProductOrderItem[]
+  payments     ProductPayment[]
+  statusLogs   ProductOrderStatusLog[]
+}
+
+model ProductOrderItem {
+  id        Int    @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  name      String // snapshot at order time
+  unit      String // snapshot
+  unitPrice Float // snapshot — never re-derived from a later product edit
+  qty       Float
+  lineTotal Float
+
+  order   ProductOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product LocalProduct @relation(fields: [productId], references: [id])
+}
+
+model ProductPayment {
+  id           Int       @id @default(autoincrement())
+  orderId      Int
+  method       String // gcash | treasurer_cash
+  amount       Float
+  gatewayRef   String?
+  senderName   String?
+  orNumber     String?
+  status       String    @default("pending") // pending | paid | failed
+  paidAt       DateTime?
+  recordedById Int?
+  createdAt    DateTime  @default(now())
+
+  order ProductOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model ProductOrderStatusLog {
+  id          Int      @id @default(autoincrement())
+  orderId     Int
+  fromStatus  String?
+  toStatus    String
+  actorUserId Int?
+  note        String?
+  createdAt   DateTime @default(now())
+
+  order ProductOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }

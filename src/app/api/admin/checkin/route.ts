@@ -36,6 +36,12 @@ export async function POST(req: Request) {
   });
   if (!booking) return NextResponse.json({ error: `No booking found for ${bookingCode}.` }, { status: 404 });
 
+  // Same QR scan surfaces product pickups — one stop for the tourist and the office.
+  const productOrders = await prisma.productOrder.findMany({
+    where: { bookingId: booking.id, status: { in: ["paid", "ready_for_pickup"] } },
+    include: { items: true },
+  });
+
   const summary = {
     bookingCode: booking.bookingCode,
     touristName: booking.touristName,
@@ -44,6 +50,11 @@ export async function POST(req: Request) {
     sites: booking.destinations.map((d) => d.destination.name),
     guides: booking.assignments.map((a) => a.guide.fullName),
     balance: booking.totalAmount - booking.amountPaid,
+    productOrders: productOrders.map((o) => ({
+      orderCode: o.orderCode,
+      status: o.status,
+      items: o.items.map((i) => `${i.qty} ${i.unit} ${i.name}`),
+    })),
   };
 
   if (booking.status === "checked_in" || booking.status === "completed") {

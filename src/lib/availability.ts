@@ -93,3 +93,35 @@ function safeParse(v: string): string[] {
     return [];
   }
 }
+
+/**
+ * Remaining sellable stock for an `in_stock`-mode product. `stockQty` is the
+ * admin's on-hand count and is never touched by checkout — it's only mutated
+ * by an admin edit or by the "mark picked up" fulfillment step, which is the
+ * moment goods actually leave the shelf. Everything in between (pending
+ * payment, under review, paid, ready for pickup) counts as a live hold, same
+ * as `remainingCapacity()` above; an expired unpaid order releases its hold
+ * automatically because nothing was ever decremented for it.
+ */
+export async function productStockRemaining(productId: number): Promise<number> {
+  const product = await prisma.localProduct.findUnique({ where: { id: productId } });
+  if (!product || product.availabilityMode !== "in_stock") return Infinity;
+
+  const items = await prisma.productOrderItem.findMany({
+    where: { productId },
+    include: { order: true },
+  });
+
+  const now = new Date();
+  const held = items.reduce((sum, item) => {
+    const o = item.order;
+    // Already reflected directly in stockQty by the pickup transaction — counting
+    // it again here would double-subtract every order once it's fulfilled.
+    if (o.status === "picked_up") return sum;
+    if (o.status === "cancelled") return sum;
+    if (o.status === "pending_payment" && o.expiresAt && o.expiresAt < now) return sum; // expired hold — released
+    return sum + item.qty;
+  }, 0);
+
+  return Math.max(0, product.stockQty - held);
+}

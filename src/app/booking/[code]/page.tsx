@@ -11,6 +11,8 @@ import SiteFooter from "@/components/SiteFooter";
 import PayPanel from "./PayPanel";
 import StatusTracker from "./StatusTracker";
 import BookingAddOns from "./BookingAddOns";
+import CartCheckoutPanel from "./CartCheckoutPanel";
+import ProductOrdersSection from "./ProductOrdersSection";
 import { SealCheckIcon } from "@phosphor-icons/react/dist/ssr";
 
 export const dynamic = "force-dynamic";
@@ -150,7 +152,12 @@ export default async function BookingPage({ params }: { params: Promise<{ code: 
               )}
             </div>
           )}
+          {!["cancelled", "expired", "completed"].includes(booking.status) && (
+            <CartCheckoutPanel bookingCode={booking.bookingCode} />
+          )}
         </div>
+
+        <ProductOrdersSection bookingId={booking.id} />
 
         {/* Soft product endorsement — hidden once the trip is over or called off */}
         {!["cancelled", "expired", "completed"].includes(booking.status) && (

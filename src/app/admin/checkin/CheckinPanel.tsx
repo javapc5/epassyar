@@ -10,8 +10,10 @@ import {
   UserCircleCheckIcon,
   CalendarBlankIcon,
   ArrowClockwiseIcon,
+  BasketIcon,
 } from "@phosphor-icons/react";
 
+type ProductOrderSummary = { orderCode: string; status: string; items: string[] };
 type Summary = {
   bookingCode: string;
   touristName: string;
@@ -20,6 +22,7 @@ type Summary = {
   sites: string[];
   guides: string[];
   balance: number;
+  productOrders: ProductOrderSummary[];
 };
 type Result = { ok?: boolean; already?: boolean; status?: string; scannedAt?: string | null; booking?: Summary; error?: string };
 
@@ -104,6 +107,20 @@ export default function CheckinPanel({ initialToken }: { initialToken: string | 
           {b.balance > 0 && (
             <div className="mt-3 rounded-btn bg-cta-500/15 px-3 py-2 text-sm font-bold text-cta-700">
               Collect on-site balance: {peso(b.balance)}
+            </div>
+          )}
+          {b.productOrders.length > 0 && (
+            <div className="mt-3 rounded-btn border-2 border-brand-200 bg-brand-50 p-3">
+              <div className="flex items-center gap-1.5 font-bold text-brand-700">
+                <BasketIcon size={16} weight="fill" /> Hand over product order{b.productOrders.length > 1 ? "s" : ""}
+              </div>
+              {b.productOrders.map((o) => (
+                <div key={o.orderCode} className="mt-1.5 text-[13px]">
+                  <span className="font-mono font-bold">{o.orderCode}</span>
+                  <span className="ml-1.5 text-ink-600">{o.items.join(", ")}</span>
+                  <span className="pill ml-1.5 bg-white text-brand-700">{o.status === "ready_for_pickup" ? "Ready" : "Paid"}</span>
+                </div>
+              ))}
             </div>
           )}
           {already && result?.scannedAt && (
