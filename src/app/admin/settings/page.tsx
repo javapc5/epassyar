@@ -1,11 +1,11 @@
-import { DeviceMobileIcon, ReceiptIcon, VanIcon, TimerIcon, PaletteIcon, ImagesIcon, FilmSlateIcon, SlidersIcon, InfoIcon } from "@phosphor-icons/react/dist/ssr";
+import { DeviceMobileIcon, ReceiptIcon, VanIcon, TimerIcon, PaletteIcon, ImagesIcon, FilmSlateIcon, SlidersIcon, InfoIcon, HandWavingIcon } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
 import { peso } from "@/lib/format";
 import { Field, TextInput, TextArea, Select, FormCard } from "@/components/admin/FormBits";
 import ImageCropUpload from "@/components/admin/ImageCropUpload";
 import HeroBannerManager from "@/components/admin/HeroBannerManager";
 import { requireRole, MANAGER_ROLES } from "@/lib/auth";
-import { saveFees, saveGcash, saveExpiry, saveBranding, saveHeroAppearance, addTransportRoute, toggleTransportRoute } from "./actions";
+import { saveFees, saveGcash, saveExpiry, saveBranding, saveHeroAppearance, saveWelcomePopup, addTransportRoute, toggleTransportRoute } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -124,6 +124,23 @@ export default async function AdminSettings() {
               Show captions on the banner
             </label>
             <button className="btn btn-green w-fit">Save banner appearance</button>
+          </FormCard>
+        </form>
+
+        {/* WELCOME POPUP — first-visit greeting */}
+        <form action={saveWelcomePopup} className="lg:col-span-2">
+          <FormCard title="Welcome popup">
+            <div className="flex items-center gap-2 text-brand-700"><HandWavingIcon size={20} weight="duotone" /><span className="text-xs font-semibold text-ink-600">Greets first-time visitors once per browser session. Leave the heading or message blank to use the default copy.</span></div>
+            <Field label="Background photo" hint="Fills the popup header. Leave unset to use the plain brand-green header instead.">
+              <ImageCropUpload name="welcomePhotoPath" mode="wide" initial={muni?.welcomePhotoUrl} buttonLabel="Upload welcome photo" />
+            </Field>
+            <Field label="Heading" hint={'Default: "Maligayang pagdating! Welcome to ePassyar"'}>
+              <TextInput name="welcomeHeading" defaultValue={muni?.welcomeHeading ?? ""} placeholder="Maligayang pagdating! Welcome to ePassyar" />
+            </Field>
+            <Field label="Message" hint="Default describes planning a visit, booking guides, and browsing products.">
+              <TextArea name="welcomeMessage" rows={3} defaultValue={muni?.welcomeMessage ?? ""} placeholder={`Plan your visit to ${muni?.name ?? "Bagulin"}, reserve guided tours to waterfalls, caves and viewdecks, and bring home local products — all in one place.`} />
+            </Field>
+            <button className="btn btn-green w-fit">Save welcome popup</button>
           </FormCard>
         </form>
 

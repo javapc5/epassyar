@@ -35,6 +35,9 @@ model Municipality {
   gcashName               String? // account holder shown to tourists
   gcashNumber             String? // 09xx number tourists send to
   gcashQrUrl              String? // uploaded QR image (/uploads/...)
+  welcomePhotoUrl         String? // background photo for the first-visit welcome popup
+  welcomeHeading          String? // popup heading; falls back to a default greeting if unset
+  welcomeMessage          String? // popup body copy; falls back to a default description if unset
   status                  String   @default("active")
   createdAt               DateTime @default(now())
 

@@ -51,7 +51,13 @@ export default async function HomePage() {
   return (
     <>
       <SiteHeader />
-      <WelcomeModal municipalityName={muni?.name ?? "Bagulin"} tagline={muni?.tagline} />
+      <WelcomeModal
+        municipalityName={muni?.name ?? "Bagulin"}
+        tagline={muni?.tagline}
+        photoUrl={muni?.welcomePhotoUrl}
+        heading={muni?.welcomeHeading}
+        message={muni?.welcomeMessage}
+      />
 
       {/* HERO */}
       <section className="relative overflow-hidden text-white">

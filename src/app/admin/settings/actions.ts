@@ -60,6 +60,21 @@ export async function saveGcash(formData: FormData) {
   revalidatePath("/admin/settings");
 }
 
+export async function saveWelcomePopup(formData: FormData) {
+  await requireRole(MANAGER_ROLES);
+  const photo = String(formData.get("welcomePhotoPath") ?? "").trim() || null;
+  await prisma.municipality.update({
+    where: { id: MUNICIPALITY_ID },
+    data: {
+      welcomeHeading: String(formData.get("welcomeHeading") ?? "").trim() || null,
+      welcomeMessage: String(formData.get("welcomeMessage") ?? "").trim() || null,
+      ...(photo ? { welcomePhotoUrl: photo } : {}),
+    },
+  });
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/settings");
+}
+
 export async function saveHeroAppearance(formData: FormData) {
   await requireRole(MANAGER_ROLES);
   const transition = String(formData.get("heroTransition") ?? "fade");

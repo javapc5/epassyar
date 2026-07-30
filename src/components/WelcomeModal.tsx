@@ -11,9 +11,15 @@ const SEEN_KEY = "epassyar_welcome_seen";
 export default function WelcomeModal({
   municipalityName,
   tagline,
+  photoUrl,
+  heading,
+  message,
 }: {
   municipalityName: string;
   tagline?: string | null;
+  photoUrl?: string | null;
+  heading?: string | null;
+  message?: string | null;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -65,23 +71,35 @@ export default function WelcomeModal({
           <XIcon size={16} weight="bold" />
         </button>
 
-        <div className="bg-canopy px-6 pb-8 pt-7 text-white">
-          <EpassyarMark size={40} tone="reversed" />
-          <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] backdrop-blur-sm">
-            <SealCheckIcon size={13} weight="fill" /> Official LGU {municipalityName}
-          </span>
-          <h2 className="mt-3 font-display text-xl font-extrabold leading-tight">
-            Maligayang pagdating!
-            <br />
-            Welcome to ePassyar
-          </h2>
-          {tagline && <p className="mt-1.5 text-[13px] text-white/85">{tagline}</p>}
+        <div
+          className={`relative px-6 pb-8 pt-7 text-white ${photoUrl ? "bg-cover bg-center" : "bg-canopy"}`}
+          style={photoUrl ? { backgroundImage: `url(${photoUrl})` } : undefined}
+        >
+          {photoUrl && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/10" />
+          )}
+          <div className="relative">
+            <EpassyarMark size={40} tone="reversed" />
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] backdrop-blur-sm">
+              <SealCheckIcon size={13} weight="fill" /> Official LGU {municipalityName}
+            </span>
+            {heading ? (
+              <h2 className="mt-3 font-display text-xl font-extrabold leading-tight">{heading}</h2>
+            ) : (
+              <h2 className="mt-3 font-display text-xl font-extrabold leading-tight">
+                Maligayang pagdating!
+                <br />
+                Welcome to ePassyar
+              </h2>
+            )}
+            {tagline && <p className="mt-1.5 text-[13px] text-white/85">{tagline}</p>}
+          </div>
         </div>
 
         <div className="p-6">
           <p className="text-[13.5px] leading-relaxed text-ink-600">
-            Plan your visit to {municipalityName}, reserve guided tours to waterfalls, caves and viewdecks, and
-            bring home local products — all in one place.
+            {message ??
+              `Plan your visit to ${municipalityName}, reserve guided tours to waterfalls, caves and viewdecks, and bring home local products — all in one place.`}
           </p>
           <div className="mt-5 flex flex-col gap-2">
             <Link href="/build" onClick={dismiss} className="btn btn-amber w-full justify-center">
