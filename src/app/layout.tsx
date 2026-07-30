@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Inter } from "next/font/google";
+import { Bricolage_Grotesque, Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import PageProgress from "@/components/PageProgress";
 import BottomTabBar from "@/components/BottomTabBar";
@@ -15,6 +15,15 @@ const bricolage = Bricolage_Grotesque({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+// Light, wide-tracked wordmark face — used only for the "passyar" brand
+// lockup in the header/footer, next to the EpassyarMark icon.
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300"],
+  variable: "--font-wordmark",
   display: "swap",
 });
 
@@ -34,7 +43,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${inter.variable}`}>
+    <html lang="en" className={`${bricolage.variable} ${inter.variable} ${poppins.variable}`}>
       <body>
         <CartProvider>
           <PageProgress />

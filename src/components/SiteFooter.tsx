@@ -32,12 +32,10 @@ export default async function SiteFooter() {
       <div className="wrap relative grid gap-8 py-10 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
         {/* Brand */}
         <div className="col-span-2 lg:col-span-1">
-          <div className="flex items-center gap-2.5">
-            <EpassyarMark size={32} className="shrink-0 shadow-sm" />
+          <div className="flex items-center gap-2">
+            <EpassyarMark size={30} tone="reversed" className="shrink-0" />
             <div className="leading-tight">
-              <div className="font-display text-[13.5px] font-bold text-white">
-                <span className="text-cta-400">e</span>Passyar
-              </div>
+              <div className="font-wordmark text-[16px] text-white">epassyar</div>
               <div className="text-[11px]">{name} Smart Tourism · LGU Official</div>
             </div>
           </div>
@@ -79,7 +77,11 @@ export default async function SiteFooter() {
 
       <div className="relative border-t border-white/10 py-3 text-center text-[11px] text-[#7D838B]">
         © {new Date().getFullYear()} LGU {name}{muni?.province ? `, ${muni.province}` : ""} · Accommodations listed are recommendations only and not bookable online.
-        <span className="mx-2 opacity-40">·</span>Powered by <span className="font-semibold text-[#9CA3AB]"><span className="text-cta-400">e</span>Passyar</span>
+        <span className="mx-2 opacity-40">·</span>Powered by{" "}
+        <span className="inline-flex items-center gap-1 align-middle">
+          <EpassyarMark size={14} tone="reversed" className="shrink-0" />
+          <span className="font-wordmark text-[#9CA3AB]">epassyar</span>
+        </span>
       </div>
     </footer>
   );

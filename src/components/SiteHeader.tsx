@@ -22,18 +22,19 @@ export default async function SiteHeader() {
         {/* Brand */}
         <Link
           href="/"
-          className="group flex shrink-0 items-center gap-2 font-display text-[15px] font-extrabold text-brand-800"
+          className="group flex shrink-0 items-center gap-1 text-[19px] text-ink-900"
         >
           {/* ePassyar platform mark only — the municipal seal is shown on the
-              home banner and admin sidebar, not the site header. */}
+              home banner and admin sidebar, not the site header. The icon
+              stands in for the literal "e" — together with the wordmark it
+              reads as one word, "epassyar". */}
           <EpassyarMark
-            size={30}
-            className="shrink-0 shadow-sm transition-transform duration-300 group-hover:-rotate-6"
+            size={28}
+            tone="color"
+            className="shrink-0 transition-transform duration-300 group-hover:-rotate-6"
           />
-          <span className="leading-none">
-            <span className="text-cta-600">e</span>Passyar
-            <span className="ml-1.5 hidden text-[11px] font-medium text-ink-500 sm:inline">· {name}</span>
-          </span>
+          <span className="font-wordmark leading-none">epassyar</span>
+          <span className="ml-1.5 hidden text-[11px] font-medium text-ink-500 sm:inline">· {name}</span>
         </Link>
 
         {/* Desktop nav */}

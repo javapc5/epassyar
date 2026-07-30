@@ -66,7 +66,7 @@ export default function WelcomeModal({
         </button>
 
         <div className="bg-canopy px-6 pb-8 pt-7 text-white">
-          <EpassyarMark size={40} className="shadow-sm" />
+          <EpassyarMark size={40} tone="reversed" />
           <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] backdrop-blur-sm">
             <SealCheckIcon size={13} weight="fill" /> Official LGU {municipalityName}
           </span>
