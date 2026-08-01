@@ -51,6 +51,7 @@ async function main() {
   await db.payment.deleteMany();
   await db.qrPass.deleteMany();
   await db.smsLog.deleteMany();
+  await db.productOrder.deleteMany();
   await db.booking.deleteMany();
   await db.packageDestination.deleteMany();
   await db.tourPackage.deleteMany();
