@@ -2,10 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/prisma";
+import { prisma, getMunicipalityId } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
-
-const MUNICIPALITY_ID = 1;
 
 function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
@@ -31,7 +29,7 @@ export async function savePackage(formData: FormData) {
     .map((label) => ({ label, included: false }));
 
   const data = {
-    municipalityId: MUNICIPALITY_ID,
+    municipalityId: await getMunicipalityId(),
     name,
     description: String(formData.get("description") ?? "").trim() || null,
     durationDays: Math.max(1, Number(formData.get("durationDays") ?? 1) || 1),

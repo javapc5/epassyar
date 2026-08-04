@@ -1,10 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/prisma";
+import { prisma, getMunicipalityId } from "@/lib/prisma";
 import { requireRole, MANAGER_ROLES } from "@/lib/auth";
-
-const MUNICIPALITY_ID = 1;
 
 // Every action in this file is manager-only. Server actions are addressable by
 // action id independently of the page they were rendered on, so gating
@@ -14,7 +12,7 @@ export async function saveBranding(formData: FormData) {
   await requireRole(MANAGER_ROLES);
   const logo = String(formData.get("logoPath") ?? "").trim() || null;
   await prisma.municipality.update({
-    where: { id: MUNICIPALITY_ID },
+    where: { id: await getMunicipalityId() },
     data: {
       name: String(formData.get("name") ?? "").trim() || "Municipality",
       province: String(formData.get("province") ?? "").trim() || "",
@@ -36,9 +34,10 @@ export async function saveFees(formData: FormData) {
     { feeCode: "INSURANCE", amount: Number(formData.get("insurance") ?? 0) || 0 },
     { feeCode: "RESERVATION", amount: Number(formData.get("reservation") ?? 20) || 20 },
   ];
+  const municipalityId = await getMunicipalityId();
   for (const u of updates) {
     await prisma.feeSetting.updateMany({
-      where: { municipalityId: MUNICIPALITY_ID, feeCode: u.feeCode },
+      where: { municipalityId, feeCode: u.feeCode },
       data: { amount: u.amount },
     });
   }
@@ -50,7 +49,7 @@ export async function saveGcash(formData: FormData) {
   await requireRole(MANAGER_ROLES);
   const qr = String(formData.get("qrPath") ?? "").trim() || null;
   await prisma.municipality.update({
-    where: { id: MUNICIPALITY_ID },
+    where: { id: await getMunicipalityId() },
     data: {
       gcashName: String(formData.get("gcashName") ?? "").trim() || null,
       gcashNumber: String(formData.get("gcashNumber") ?? "").trim() || null,
@@ -64,7 +63,7 @@ export async function saveWelcomePopup(formData: FormData) {
   await requireRole(MANAGER_ROLES);
   const photo = String(formData.get("welcomePhotoPath") ?? "").trim() || null;
   await prisma.municipality.update({
-    where: { id: MUNICIPALITY_ID },
+    where: { id: await getMunicipalityId() },
     data: {
       welcomeHeading: String(formData.get("welcomeHeading") ?? "").trim() || null,
       welcomeMessage: String(formData.get("welcomeMessage") ?? "").trim() || null,
@@ -82,7 +81,7 @@ export async function saveHeroAppearance(formData: FormData) {
   // The form field is entered in seconds; store milliseconds.
   const intervalMs = Math.round((Number(formData.get("heroIntervalMs") ?? 5) || 5) * 1000);
   await prisma.municipality.update({
-    where: { id: MUNICIPALITY_ID },
+    where: { id: await getMunicipalityId() },
     data: {
       heroIntervalMs: Math.min(20000, Math.max(2000, intervalMs)),
       heroTransition: allowed.has(transition) ? transition : "fade",
@@ -97,7 +96,7 @@ export async function saveHeroAppearance(formData: FormData) {
 export async function saveExpiry(formData: FormData) {
   await requireRole(MANAGER_ROLES);
   await prisma.municipality.update({
-    where: { id: MUNICIPALITY_ID },
+    where: { id: await getMunicipalityId() },
     data: { reservationExpiryHours: Math.max(1, Number(formData.get("hours") ?? 24) || 24) },
   });
   revalidatePath("/admin/settings");
@@ -111,7 +110,7 @@ export async function addTransportRoute(formData: FormData) {
   const feePerTrip = Number(formData.get("feePerTrip") ?? 0) || null;
   await prisma.transportRoute.create({
     data: {
-      municipalityId: MUNICIPALITY_ID,
+      municipalityId: await getMunicipalityId(),
       routeName,
       vehicleType: String(formData.get("vehicleType") ?? "").trim() || "Habal-habal",
       feePerPax,

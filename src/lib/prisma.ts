@@ -9,3 +9,10 @@ export const prisma =
   });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+/** Single-tenant app — looks up the one Municipality row instead of assuming its id, which shifts whenever the DB is reseeded. */
+export async function getMunicipalityId(): Promise<number> {
+  const municipality = await prisma.municipality.findFirst({ select: { id: true } });
+  if (!municipality) throw new Error("No municipality is configured.");
+  return municipality.id;
+}

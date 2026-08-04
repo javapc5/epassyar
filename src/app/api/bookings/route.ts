@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, getMunicipalityId } from "@/lib/prisma";
 import { quoteCustomItinerary, computeReservationDue } from "@/lib/pricing";
 import { remainingCapacity } from "@/lib/availability";
 import { bookingCode } from "@/lib/booking-code";
 import { grantBookingAccess } from "@/lib/booking-access";
 import { rateLimit, clientIpFrom } from "@/lib/rate-limit";
 import { dispatchQueuedSms } from "@/lib/sms";
-
-const MUNICIPALITY_ID = 1;
 
 /** Max destinations in one custom itinerary — also caps the per-request DB work. */
 const MAX_DESTINATIONS = 12;
@@ -95,7 +93,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: `Groups larger than ${MAX_PAX} need to be arranged with the Tourism Office directly.` }, { status: 400 });
   }
 
-  const muni = await prisma.municipality.findUnique({ where: { id: MUNICIPALITY_ID } });
+  const municipalityId = await getMunicipalityId();
+  const muni = await prisma.municipality.findUnique({ where: { id: municipalityId } });
   const expiresAt = new Date(Date.now() + (muni?.reservationExpiryHours ?? 24) * 3600 * 1000);
 
   let total = 0;
@@ -114,7 +113,7 @@ export async function POST(req: Request) {
     }
     destIds = pkg.destinations.map((d) => d.destinationId);
     total = pkg.pricePerPax * pax;
-    const resFee = await prisma.feeSetting.findFirst({ where: { municipalityId: MUNICIPALITY_ID, feeCode: "RESERVATION" } });
+    const resFee = await prisma.feeSetting.findFirst({ where: { municipalityId, feeCode: "RESERVATION" } });
     reservationDue = computeReservationDue(total, resFee?.calcType, resFee?.amount);
     feeLines = [{ feeCode: "PACKAGE", label: `${pkg.name} (${pax} pax)`, quantity: pax, unitAmount: pkg.pricePerPax, lineTotal: total }];
   } else {
@@ -126,7 +125,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `An itinerary can include up to ${MAX_DESTINATIONS} destinations.` }, { status: 400 });
     }
     const quote = await quoteCustomItinerary({
-      municipalityId: MUNICIPALITY_ID,
+      municipalityId,
       destinationIds: destIds,
       adults: numAdults,
       children: numChildren,
@@ -153,7 +152,7 @@ export async function POST(req: Request) {
   const booking = await prisma.booking.create({
     data: {
       bookingCode: code,
-      municipalityId: MUNICIPALITY_ID,
+      municipalityId,
       bookingType: bookingType === "package" ? "package" : "custom",
       packageId: bookingType === "package" ? Number(packageId) : null,
       touristName: name,

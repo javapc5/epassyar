@@ -2,10 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/prisma";
+import { prisma, getMunicipalityId } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
-
-const MUNICIPALITY_ID = 1;
 
 export async function saveProduct(formData: FormData) {
   await requireUser();
@@ -18,7 +16,7 @@ export async function saveProduct(formData: FormData) {
   const photo = String(formData.get("photoPath") ?? "").trim() || null;
 
   const data = {
-    municipalityId: MUNICIPALITY_ID,
+    municipalityId: await getMunicipalityId(),
     name,
     category: String(formData.get("category") ?? "").trim() || null,
     description: String(formData.get("description") ?? "").trim() || null,
