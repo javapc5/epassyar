@@ -8,7 +8,8 @@
  * where scripts, images, media and connections may come from, which is what
  * actually contains an injected payload.
  *
- * img-src allows Cloudinary (the media store) plus data:/blob: for the QR pass
+ * Media is served from the app's own origin ('self') — public files at
+ * /uploads/ and gated ones at /api/admin/media/. data:/blob: cover the QR pass
  * data-URI and the client-side image cropper preview.
  *
  * 'unsafe-eval' is added in development only: `next dev` (React's error overlay,
@@ -21,10 +22,10 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://res.cloudinary.com",
-  "media-src 'self' https://res.cloudinary.com",
+  "img-src 'self' data: blob:",
+  "media-src 'self'",
   "font-src 'self' data:",
-  "connect-src 'self' https://res.cloudinary.com",
+  "connect-src 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
   "base-uri 'self'",
@@ -47,9 +48,8 @@ const securityHeaders = [
 
 const nextConfig = {
   reactStrictMode: true,
-  images: {
-    remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
-  },
+  // All media is served from this app's own origin now (local disk), so no
+  // remote image hosts need allow-listing.
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },

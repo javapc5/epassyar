@@ -1,6 +1,11 @@
-/** Returns true for both local /uploads/ paths and Cloudinary https:// URLs. */
+/** True for public /uploads/ paths, gated /api/admin/media/ paths, and https:// URLs. */
 export function isMediaUrl(url: string | null | undefined): boolean {
-  return !!url && (url.startsWith("/uploads/") || url.startsWith("https://"));
+  return (
+    !!url &&
+    (url.startsWith("/uploads/") ||
+      url.startsWith("/api/admin/media/") ||
+      url.startsWith("https://"))
+  );
 }
 
 export function peso(amount: number): string {

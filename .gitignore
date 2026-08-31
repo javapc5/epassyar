@@ -19,8 +19,9 @@ tsconfig.tsbuildinfo
 # claude code session data
 .claude/
 
-# user-uploaded files — store in cloud storage (Cloudinary / S3) in production
+# user-uploaded files — stored on the local server disk (self-hosted)
 public/uploads/
+private-uploads/
 
 # local QA / screenshot scripts — throwaway, hardcoded absolute paths
 /check-mobile.js

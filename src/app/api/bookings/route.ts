@@ -177,7 +177,7 @@ export async function POST(req: Request) {
     },
   });
 
-  // Queue an SMS (logged only — wire to Semaphore in production)
+  // Record an in-app notification (read by staff in the admin log — no SMS gateway)
   await prisma.smsLog.create({
     data: {
       bookingId: booking.id,
