@@ -101,23 +101,32 @@ export default function Builder({ destinations, transport }: { destinations: Des
     if (!name || !mobile) return setError("Please enter your name and mobile number.");
     if (selected.length === 0) return setError("Add at least one destination.");
     setSubmitting(true);
-    const res = await fetch("/api/bookings", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        bookingType: "custom",
-        destinationIds: selected,
-        adults, children, visitDate: date,
-        transportRouteId: transportId,
-        touristName: name, touristMobile: mobile, touristOrigin: origin,
-        baggageKg: hasBaggage ? baggageKg : 0,
-        baggageNotes: hasBaggage ? baggageNotes : "",
-      }),
-    });
-    const data = await res.json();
-    setSubmitting(false);
-    if (!res.ok) return setError(data.error ?? "Something went wrong.");
-    router.push(`/booking/${data.bookingCode}`);
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          bookingType: "custom",
+          destinationIds: selected,
+          adults, children, visitDate: date,
+          transportRouteId: transportId,
+          touristName: name, touristMobile: mobile, touristOrigin: origin,
+          baggageKg: hasBaggage ? baggageKg : 0,
+          baggageNotes: hasBaggage ? baggageNotes : "",
+        }),
+      });
+      // Read the body defensively: a 500/504 can return an HTML error page, and
+      // res.json() would otherwise throw and leave the button stuck forever.
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.bookingCode) {
+        return setError(data?.error ?? "Couldn't create your reservation. Please try again.");
+      }
+      router.push(`/booking/${data.bookingCode}`);
+    } catch {
+      setError("Network problem — your reservation didn't go through. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
