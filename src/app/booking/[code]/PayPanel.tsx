@@ -54,7 +54,7 @@ export default function PayPanel({
       <div className="font-display text-lg font-bold">Pay reservation fee via GCash</div>
       <p className="mt-1 text-sm text-ink-600">
         Send <b className="text-brand-700">{peso(reservationDue)}</b> to the account below, then enter your GCash
-        reference number so the Tourism Office can verify it.
+        reference number so our team can verify it.
         {hoursLeft !== null && <> This reservation expires in about <b>{hoursLeft} hour{hoursLeft === 1 ? "" : "s"}</b>.</>}
       </p>
 
@@ -91,7 +91,7 @@ export default function PayPanel({
         )}
 
         <div className="mt-4 border-t border-line pt-3 text-center">
-          <div className="font-display text-lg font-extrabold">{gcash.name ?? "Bagulin Tourism Office"}</div>
+          <div className="font-display text-lg font-extrabold">{gcash.name ?? "ePassyar"}</div>
           <button onClick={copyNumber} className="mt-0.5 inline-flex items-center gap-1.5 font-mono text-base font-bold text-brand-700">
             {gcash.number ?? "—"} {copied ? <CheckIcon size={15} weight="bold" /> : <CopyIcon size={15} />}
           </button>
@@ -110,7 +110,7 @@ export default function PayPanel({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={gcash.qrUrl} alt="GCash QR code" className="mx-auto h-[80vw] max-h-[420px] w-[80vw] max-w-[420px] object-contain" />
             <div className="mt-3 text-center">
-              <div className="font-display text-lg font-extrabold">{gcash.name ?? "Bagulin Tourism Office"}</div>
+              <div className="font-display text-lg font-extrabold">{gcash.name ?? "ePassyar"}</div>
               <div className="font-mono text-base font-bold text-brand-700">{gcash.number}</div>
               <div className="text-sm">Send <b className="text-brand-700">{peso(reservationDue)}</b></div>
             </div>
@@ -147,7 +147,7 @@ export default function PayPanel({
 
       <div className="mt-3 flex items-start gap-2 text-[12px] leading-relaxed text-ink-600">
         <BankIcon size={16} weight="duotone" className="mt-0.5 shrink-0" />
-        <span>Prefer cash? You can also pay the reservation fee at the Municipal Treasurer&apos;s Office — mention your booking code <b className="whitespace-nowrap">{code}</b> and the cashier will record it.</span>
+        <span>Prefer cash? You can also pay the reservation fee in person at our office — mention your booking code <b className="whitespace-nowrap">{code}</b> and the cashier will record it.</span>
       </div>
     </div>
   );

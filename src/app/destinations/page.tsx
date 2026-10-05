@@ -12,7 +12,7 @@ export default async function DestinationsPage() {
       <SiteHeader />
       <main className="wrap py-8">
         <h1 className="font-display text-2xl font-extrabold">Tourist Destinations</h1>
-        <p className="mt-1 text-[13.5px] text-ink-600">{destinations.length} officially declared destinations across the barangays of Bagulin.</p>
+        <p className="mt-1 text-[13.5px] text-ink-600">{destinations.length} destinations across the barangays of Bagulin.</p>
         <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {destinations.map((d) => (
             <DestinationCard key={d.id} d={d} />

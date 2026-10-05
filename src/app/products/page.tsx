@@ -25,7 +25,7 @@ export default async function ProductsPage() {
       <main className="wrap py-8">
         <h1 className="font-display text-2xl font-extrabold">Local Products of Bagulin</h1>
         <p className="mt-1 text-[13.5px] text-ink-600">
-          Sourced from local farmers and cooperatives through the Tourism Office. Order ahead and pick up on your visit.
+          Sourced from local farmers and cooperatives. Order ahead and pick up on your visit.
         </p>
 
         {/* ─── Trending showcase ─────────────────────────────────────────── */}

@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!Number.isInteger(numId)) return {};
   const p = await prisma.localProduct.findUnique({ where: { id: numId } });
   if (!p) return {};
-  const description = p.description ?? `${unitPrice(p.price, p.unit)} — sourced from local farmers and cooperatives through the Bagulin Tourism Office.`;
+  const description = p.description ?? `${unitPrice(p.price, p.unit)} — sourced from local farmers and cooperatives.`;
   return {
     title: `${p.name} · ePassyar Local Products`,
     description,
@@ -54,7 +54,7 @@ const TONE: Record<string, string> = {
 
 // How each mode reads to the buyer, independent of a specific pickup date.
 const MODE_META: Record<string, { label: string; blurb: string }> = {
-  always: { label: "Available anytime", blurb: "Kept in stock at the Tourism Office year-round — order for any visit date." },
+  always: { label: "Available anytime", blurb: "Kept in stock year-round — order for any visit date." },
   in_stock: { label: "In stock", blurb: "A limited quantity is on hand. Reserve early — stock is first-come." },
   made_to_order: { label: "Made to order", blurb: "Sourced fresh from the producer once you order, so it needs a few days' notice before your visit." },
   unavailable: { label: "Currently unavailable", blurb: "Not being offered right now. Check back on a later visit." },
@@ -160,7 +160,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
 
           <div className="mt-4 rounded-lg bg-brand-50 px-3 py-2.5 text-[12.5px] leading-relaxed text-ink-700">
             <StorefrontIcon size={14} weight="fill" className="mr-1 inline text-brand-700" />
-            Reserve and pay for cart items from your booking page, then pick up at the Municipal Tourism Office on your visit day.
+            Reserve and pay for cart items from your booking page, then pick up at our pickup point on your visit day.
           </div>
 
           <Link href="/my-booking" className="mt-3 block text-center text-[12.5px] font-semibold text-brand-700 hover:underline">

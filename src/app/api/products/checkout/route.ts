@@ -115,7 +115,7 @@ export async function POST(req: Request) {
       recipientMobile: booking.touristMobile,
       recipientType: "tourist",
       template: "PRODUCT_ORDER_CREATED",
-      message: `Bagulin Tourism: Product order ${orderCode} placed. Pay ${totalAmount} in full to confirm — see your booking page.`,
+      message: `ePassyar: Product order ${orderCode} placed. Pay ${totalAmount} in full to confirm — see your booking page.`,
     },
   });
   await dispatchQueuedSms(booking.id);

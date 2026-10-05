@@ -28,8 +28,8 @@ export default function ProductForm({ p }: { p?: any }) {
             <TextInput name="supplierMobile" defaultValue={p?.supplierMobile ?? ""} placeholder="09XXXXXXXXX" />
           </Field>
         </div>
-        <Field label="Where to buy" hint="Leave blank to default to the Tourism Office">
-          <TextInput name="whereToBuy" defaultValue={p?.whereToBuy ?? ""} placeholder="e.g. Municipal Tourism Office" />
+        <Field label="Where to buy" hint="Leave blank to default to our pickup point">
+          <TextInput name="whereToBuy" defaultValue={p?.whereToBuy ?? ""} placeholder="e.g. ePassyar pickup point" />
         </Field>
         <Field label="Cover photo" hint="Crop and preview how it looks on desktop and mobile cards before saving.">
           <ImageCropUpload name="photoPath" mode="wide" initial={p?.image} />

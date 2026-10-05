@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   const limit = rateLimit(`booking:${ip}`, 5, 60 * 60 * 1000);
   if (!limit.ok) {
     return NextResponse.json(
-      { error: "Too many booking attempts from this connection. Please try again later or call the Tourism Office." },
+      { error: "Too many booking attempts from this connection. Please try again later or contact us." },
       { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
     );
   }
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
   const numChildren = Math.max(0, Math.min(MAX_PAX, Math.floor(Number(children)) || 0));
   const pax = numAdults + numChildren;
   if (pax > MAX_PAX) {
-    return NextResponse.json({ error: `Groups larger than ${MAX_PAX} need to be arranged with the Tourism Office directly.` }, { status: 400 });
+    return NextResponse.json({ error: `Groups larger than ${MAX_PAX} need to be arranged with us directly.` }, { status: 400 });
   }
 
   const municipalityId = await getMunicipalityId();
@@ -184,7 +184,7 @@ export async function POST(req: Request) {
       recipientMobile: mobile,
       recipientType: "tourist",
       template: "BOOKING_CREATED",
-      message: `Bagulin Tourism: Booking ${code} created. Pay reservation fee of PHP ${reservationDue} within 24h to confirm.`,
+      message: `ePassyar: Booking ${code} created. Pay reservation fee of PHP ${reservationDue} within 24h to confirm.`,
     },
   });
 

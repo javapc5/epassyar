@@ -38,7 +38,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             <div>
               <h1 className="font-display text-lg font-extrabold leading-tight text-ink-900">{name} Tourism</h1>
               <p className="flex items-center gap-1 text-xs font-semibold text-ink-600">
-                <LockKeyIcon size={12} weight="fill" /> Tourism Office sign in
+                <LockKeyIcon size={12} weight="fill" /> Staff sign in
               </p>
             </div>
           </div>
@@ -87,7 +87,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           </form>
 
           <p className="mt-4 text-center text-[11px] leading-relaxed text-ink-400">
-            Authorized municipal staff only. Access is logged.
+            Authorized staff only. Access is logged.
           </p>
         </div>
       </div>

@@ -81,7 +81,7 @@ export default function WelcomeModal({
           <div className="relative">
             <EpassyarMark size={40} tone="reversed" />
             <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] backdrop-blur-sm">
-              <SealCheckIcon size={13} weight="fill" /> Official LGU {municipalityName}
+              <SealCheckIcon size={13} weight="fill" /> {municipalityName} · La Union
             </span>
             {heading ? (
               <h2 className="mt-3 font-display text-xl font-extrabold leading-tight">{heading}</h2>

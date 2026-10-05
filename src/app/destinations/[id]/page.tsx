@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const d = await prisma.destination.findUnique({ where: { id: Number(id) } });
   if (!d) return {};
-  const description = d.description ?? `Brgy. ${d.barangay} · ${d.category} — plan your visit with ePassyar, the official smart tourism platform of Bagulin, La Union.`;
+  const description = d.description ?? `Brgy. ${d.barangay} · ${d.category} — plan your visit with ePassyar, the smart tourism platform for Bagulin, La Union.`;
   return {
     title: `${d.name} · ePassyar`,
     description,

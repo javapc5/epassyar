@@ -15,7 +15,7 @@ export default async function AdminPackages() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-extrabold">Tour Packages</h1>
-          <p className="text-sm text-ink-600">Create official packages with destinations, pricing, inclusions, and capacity.</p>
+          <p className="text-sm text-ink-600">Create packages with destinations, pricing, inclusions, and capacity.</p>
         </div>
         <Link href="/admin/packages/new" className="btn btn-amber"><PlusIcon size={16} weight="bold" /> Create package</Link>
       </div>

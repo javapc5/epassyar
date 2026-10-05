@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         prisma.smsLog.create({
           data: {
             bookingId: o.bookingId, recipientMobile: o.booking.touristMobile, recipientType: "tourist", template: "PRODUCT_PAYMENT_VERIFIED",
-            message: `Bagulin Tourism: Payment confirmed for order ${o.orderCode}! We'll text you again once it's ready for pickup.`,
+            message: `ePassyar: Payment confirmed for order ${o.orderCode}! We'll text you again once it's ready for pickup.`,
           },
         }),
       ]);
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       prisma.smsLog.create({
         data: {
           bookingId: o.bookingId, recipientMobile: o.booking.touristMobile, recipientType: "tourist", template: "PRODUCT_PAYMENT_REJECTED",
-          message: `Bagulin Tourism: We couldn't verify the GCash reference for order ${o.orderCode}. Please check and submit again, or contact the Tourism Office.`,
+          message: `ePassyar: We couldn't verify the GCash reference for order ${o.orderCode}. Please check and submit again, or contact us.`,
         },
       }),
     ]);
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
       prisma.smsLog.create({
         data: {
           bookingId: order.bookingId, recipientMobile: order.booking.touristMobile, recipientType: "tourist", template: "PRODUCT_PAYMENT_VERIFIED",
-          message: `Bagulin Tourism: Payment received (OR ${orNumber}) for order ${order.orderCode}. We'll text you once it's ready for pickup.`,
+          message: `ePassyar: Payment received (OR ${orNumber}) for order ${order.orderCode}. We'll text you once it's ready for pickup.`,
         },
       }),
     ]);
@@ -101,7 +101,7 @@ export async function POST(req: Request) {
       prisma.smsLog.create({
         data: {
           bookingId: order.bookingId, recipientMobile: order.booking.touristMobile, recipientType: "tourist", template: "PRODUCT_ORDER_READY",
-          message: `Bagulin Tourism: Order ${order.orderCode} is ready for pickup at the Municipal Tourism Office on your visit day.`,
+          message: `ePassyar: Order ${order.orderCode} is ready for pickup at our pickup point on your visit day.`,
         },
       }),
     ]);

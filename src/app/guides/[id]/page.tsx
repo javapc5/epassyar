@@ -64,7 +64,7 @@ export default async function GuideDetail({ params }: { params: Promise<{ id: st
 
             <h2 className="mt-6 font-display text-lg font-bold">About</h2>
             <p className="mt-1 whitespace-pre-line text-[15px] leading-relaxed text-ink-900">
-              {g.bio?.trim() || `${g.fullName} is an accredited community tour guide from Brgy. ${g.barangay}, ready to lead your Bagulin adventure.`}
+              {g.bio?.trim() || `${g.fullName} is a local tour guide from Brgy. ${g.barangay}, ready to lead your Bagulin adventure.`}
             </p>
           </div>
         </div>
@@ -72,7 +72,7 @@ export default async function GuideDetail({ params }: { params: Promise<{ id: st
         <PhotoGallery entityType="guide" entityId={g.id} title="Tour photos" />
 
         <div className="mt-6 rounded-card border border-line bg-brand-100 p-4 text-sm text-brand-700">
-          Guides are assigned by the Tourism Office when your booking is approved, based on availability, barangay proximity to your destinations, and specialty. You&apos;ll see your assigned guide on your QR tourist pass.
+          Guides are assigned by our team when your booking is approved, based on availability, barangay proximity to your destinations, and specialty. You&apos;ll see your assigned guide on your QR tourist pass.
         </div>
       </main>
       <SiteFooter />

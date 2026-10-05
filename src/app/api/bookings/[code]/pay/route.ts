@@ -5,10 +5,10 @@ import { dispatchQueuedSms } from "@/lib/sms";
 
 /**
  * GCash manual-verification flow: the tourist sends the reservation fee to the
- * office GCash account in their GCash app, then submits the 13-digit reference
+ * GCash account in their GCash app, then submits the 13-digit reference
  * number here. The payment is recorded as *pending* and the booking moves to
- * `payment_review` — the Tourism Office verifies the reference against their
- * GCash transaction history and confirms in the admin panel.
+ * `payment_review` — staff verify the reference against their
+ * GCash transaction history and confirm in the admin panel.
  */
 export async function POST(req: Request, { params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
@@ -72,7 +72,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ code: s
         recipientMobile: booking.touristMobile,
         recipientType: "tourist",
         template: "PAYMENT_SUBMITTED",
-        message: `Bagulin Tourism: We received your GCash reference for ${code}. We'll confirm your payment shortly — you'll get an SMS once verified.`,
+        message: `ePassyar: We received your GCash reference for ${code}. We'll confirm your payment shortly — you'll get an SMS once verified.`,
       },
     }),
   ]);

@@ -22,7 +22,7 @@ export default async function StayPage() {
       <SiteHeader />
       <main className="wrap py-8">
         <h1 className="font-display text-2xl font-extrabold">Where to Stay</h1>
-        <p className="mt-1 text-[13.5px] text-ink-600">Homestays and cottages recommended by the Tourism Office.</p>
+        <p className="mt-1 text-[13.5px] text-ink-600">Homestays and cottages recommended by our team.</p>
 
         <div className="mt-4 flex items-start gap-2 rounded-card border border-river-100 bg-[#eaf5fa] p-4 text-[13.5px] text-river-500">
           <InfoIcon size={20} weight="fill" className="mt-0.5 shrink-0" />

@@ -85,7 +85,7 @@ export default function DestinationForm({ d }: { d?: any }) {
           <Field label="Entrance fee per pax" hint="0 = free entrance">
             <TextInput type="number" name="entranceFee" min={0} step="0.01" defaultValue={d?.entranceFee ?? 0} />
           </Field>
-          <Field label="Environmental fee override per pax" hint="0 = use the municipal default (Settings page)">
+          <Field label="Environmental fee override per pax" hint="0 = use the site default (Settings page)">
             <TextInput type="number" name="environmentalFee" min={0} step="0.01" defaultValue={d?.environmentalFee ?? 0} />
           </Field>
         </div>

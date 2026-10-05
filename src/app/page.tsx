@@ -79,14 +79,14 @@ export default async function HomePage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/15 to-transparent" />
 
-        {/* Official LGU seal — shown only when a logo is uploaded AND enabled in
+        {/* Logo seal — shown only when a logo is uploaded AND enabled in
             admin settings. Sits centered near the top of the banner. */}
         {muni?.heroLogoEnabled && isMediaUrl(muni?.logoUrl) && (
           <div className="pointer-events-none absolute inset-x-0 top-5 z-10 flex justify-center sm:top-7">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={muni!.logoUrl!}
-              alt={`${muni?.name ?? "Municipality"} official seal`}
+              alt={`${muni?.name ?? "ePassyar"} logo`}
               className="h-20 w-20 object-contain drop-shadow-lg sm:h-24 sm:w-24"
             />
           </div>
@@ -95,14 +95,14 @@ export default async function HomePage() {
         <div className="relative flex min-h-[430px] flex-col justify-center py-12 sm:py-14">
           <div className="wrap reveal">
             <span className="glass mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-white">
-              <SealCheckIcon size={13} weight="fill" /> Official LGU {muni?.name ?? "Bagulin"} · La Union
+              <SealCheckIcon size={13} weight="fill" /> {muni?.name ?? "Bagulin"} · La Union
             </span>
             <h1 className="max-w-2xl text-balance font-display text-[2rem] font-extrabold leading-[1.08] drop-shadow-lg md:text-[2.6rem]">
               {muni?.tagline ?? "Discover the Highlands of La Union"}
             </h1>
             <p className="mt-3 max-w-lg text-[14.5px] leading-relaxed text-white/90 drop-shadow-md">
               Waterfalls, heritage caves, hanging bridges and pine-cooled viewdecks — guided by{" "}
-              {muni?.name ?? "Bagulin"}&apos;s own accredited community tour guides.
+              {muni?.name ?? "Bagulin"}&apos;s own local tour guides.
             </p>
 
           </div>
@@ -112,10 +112,10 @@ export default async function HomePage() {
       {/* TRUST BAR */}
       <div className="bg-ink-900 text-[12px] text-[#B4B9C0]">
         <div className="wrap flex flex-wrap items-center gap-x-6 gap-y-1 py-2.5">
-          <Trust icon={<SealCheckIcon size={13} weight="fill" className="text-brand-400" />} text={<><b className="text-white">Official LGU</b> reservation</>} />
+          <Trust icon={<SealCheckIcon size={13} weight="fill" className="text-brand-400" />} text={<><b className="text-white">Secure</b> online reservation</>} />
           <Trust icon={<DeviceMobileIcon size={13} weight="duotone" className="text-river-300" />} text={<>Pay via <b className="text-white">GCash · Maya · Card</b></>} />
           <span className="hidden sm:contents">
-            <Trust icon={<UserCircleCheckIcon size={13} weight="duotone" className="text-cta-400" />} text={<><b className="text-white">22 accredited</b> guides</>} />
+            <Trust icon={<UserCircleCheckIcon size={13} weight="duotone" className="text-cta-400" />} text={<><b className="text-white">22 local</b> guides</>} />
             <Trust icon={<QrCodeIcon size={13} weight="duotone" className="text-brand-400" />} text={<><b className="text-white">QR pass</b> by SMS</>} />
           </span>
         </div>
@@ -181,7 +181,7 @@ export default async function HomePage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <HowStep n={1} icon={<MagnifyingGlassIcon size={22} weight="duotone" />}
             title="Choose Your Tour"
-            body="Browse official LGU packages or build a custom itinerary by picking any combination of destinations." />
+            body="Browse ready-made packages or build a custom itinerary by picking any combination of destinations." />
           <HowStep n={2} icon={<CalendarBlankIcon size={22} weight="duotone" />}
             title="Set Date & Group Size"
             body="Select your visit date and how many are joining. Live capacity shows slots remaining per site." />
@@ -196,8 +196,8 @@ export default async function HomePage() {
 
       {/* PACKAGES */}
       <Section
-        title="Official Tour Packages"
-        sub="Pre-planned by the Municipal Tourism Office — guide, fees & insurance included"
+        title="Tour Packages"
+        sub="Ready-made itineraries — guide, fees & insurance included"
         href="/packages"
         linkLabel="View all"
       >
@@ -221,7 +221,7 @@ export default async function HomePage() {
 
       {/* DESTINATIONS */}
       <Section
-        title="Officially Declared Tourist Destinations"
+        title="Tourist Destinations"
         sub={`${destinations.length} sites across the barangays of Bagulin — live daily capacity on every site`}
         href="/destinations"
         linkLabel="Explore all"
@@ -259,7 +259,7 @@ export default async function HomePage() {
               {[
                 ["No more walk-in uncertainty", "Reserve your slot days ahead — no risk of being turned away at the gate."],
                 ["100% transparent pricing", "Every entrance fee, guide fee, and charge is itemised before you pay a single peso."],
-                ["Accredited local guides", "Every guide is LGU-certified, trained, and covered — your safety is not negotiable."],
+                ["Trusted local guides", "Every guide is vetted, trained, and insured — your safety is not negotiable."],
                 ["Digital QR pass via SMS", "No app to install. Your pass arrives by text and works offline at every checkpoint."],
               ].map(([title, desc]) => (
                 <li key={title} className="flex gap-3">
@@ -273,14 +273,14 @@ export default async function HomePage() {
             </ul>
           </div>
 
-          {/* LGU */}
+          {/* Operators */}
           <div className="rounded-card border border-line bg-white p-6 shadow-card">
             <div className="mb-5 flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-canopy/10 text-brand-800">
                 <ChartLineUpIcon size={20} weight="duotone" />
               </span>
               <div>
-                <h3 className="font-display text-[15px] font-bold text-ink-900">For LGU Officials</h3>
+                <h3 className="font-display text-[15px] font-bold text-ink-900">For Operators</h3>
                 <p className="text-[12px] text-ink-600">Organized records, full visibility, zero guesswork</p>
               </div>
             </div>

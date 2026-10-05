@@ -9,7 +9,7 @@ import { prisma } from "@/lib/prisma";
  * pay-as-you-go, no app install for the recipient. It activates automatically
  * once these env vars are set:
  *   SEMAPHORE_API_KEY   — your Semaphore API key
- *   SEMAPHORE_SENDER    — approved sender name (optional, e.g. "BagulinLGU")
+ *   SEMAPHORE_SENDER    — approved sender name (optional, e.g. "ePassyar")
  *
  * Without a key it is a safe no-op: rows stay `queued` so nothing is lost and
  * the office can still read every message in the SMS log. This keeps local dev

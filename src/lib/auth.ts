@@ -13,7 +13,7 @@ const scrypt = promisify(crypto.scrypt) as (
 ) => Promise<Buffer>;
 
 /**
- * Lightweight session auth for the Tourism Office admin — no external deps.
+ * Lightweight session auth for the staff admin — no external deps.
  * Passwords are hashed with Node's built-in scrypt; the session is a signed
  * (HMAC-SHA256) stateless cookie so the edge proxy can gate routes
  * without a database round-trip. See src/proxy.ts for the gate.

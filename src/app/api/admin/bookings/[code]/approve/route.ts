@@ -25,9 +25,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ code: s
 
   if (action === "reject") {
     await prisma.$transaction([
-      prisma.booking.update({ where: { id: booking.id }, data: { status: "cancelled", cancelReason: "Rejected by Tourism Office" } }),
+      prisma.booking.update({ where: { id: booking.id }, data: { status: "cancelled", cancelReason: "Rejected by staff" } }),
       prisma.bookingStatusLog.create({ data: { bookingId: booking.id, fromStatus: "pending_approval", toStatus: "cancelled", note: `Rejected by ${staff.fullName}` } }),
-      prisma.smsLog.create({ data: { bookingId: booking.id, recipientMobile: booking.touristMobile, recipientType: "tourist", template: "BOOKING_REJECTED", message: `Bagulin Tourism: We're sorry, booking ${code} could not be approved. Your reservation fee will be refunded.` } }),
+      prisma.smsLog.create({ data: { bookingId: booking.id, recipientMobile: booking.touristMobile, recipientType: "tourist", template: "BOOKING_REJECTED", message: `ePassyar: We're sorry, booking ${code} could not be approved. Your reservation fee will be refunded.` } }),
     ]);
     await dispatchQueuedSms(booking.id);
     return NextResponse.json({ ok: true, status: "cancelled" });
@@ -53,7 +53,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ code: s
     }),
     prisma.qrPass.create({ data: { bookingId: booking.id, token } }),
     prisma.bookingStatusLog.create({ data: { bookingId: booking.id, fromStatus: "pending_approval", toStatus: "approved", note: `Approved by ${staff.fullName}; ${ids.length} guide(s) assigned` } }),
-    prisma.smsLog.create({ data: { bookingId: booking.id, recipientMobile: booking.touristMobile, recipientType: "tourist", template: "BOOKING_APPROVED", message: `Bagulin Tourism: APPROVED! Booking ${code} for ${shortDate(booking.visitDate)}. Show your QR pass on arrival. Balance PHP ${booking.totalAmount - booking.amountPaid} payable on-site.` } }),
+    prisma.smsLog.create({ data: { bookingId: booking.id, recipientMobile: booking.touristMobile, recipientType: "tourist", template: "BOOKING_APPROVED", message: `ePassyar: APPROVED! Booking ${code} for ${shortDate(booking.visitDate)}. Show your QR pass on arrival. Balance PHP ${booking.totalAmount - booking.amountPaid} payable on-site.` } }),
     ...guides.map((g) =>
       prisma.smsLog.create({
         data: {

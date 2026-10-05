@@ -24,7 +24,7 @@ export default async function SiteHeader() {
           href="/"
           className="group flex shrink-0 items-center gap-1 text-[19px] text-ink-900"
         >
-          {/* ePassyar platform mark only — the municipal seal is shown on the
+          {/* ePassyar platform mark only — the logo seal is shown on the
               home banner and admin sidebar, not the site header. The icon
               stands in for the literal "e" — together with the wordmark it
               reads as one word, "epassyar". */}

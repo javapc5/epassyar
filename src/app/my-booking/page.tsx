@@ -94,7 +94,7 @@ export default async function MyBookingPage({
           {e === "rate" ? (
             <div role="alert" className="flex items-start gap-1.5 rounded-btn bg-red-50 px-3 py-2 text-xs font-semibold text-danger">
               <WarningCircleIcon size={15} weight="fill" className="mt-px shrink-0" />
-              Too many attempts. Please wait a few minutes and try again, or call the Tourism Office for help.
+              Too many attempts. Please wait a few minutes and try again, or contact us for help.
             </div>
           ) : e ? (
             <div role="alert" className="flex items-start gap-1.5 rounded-btn bg-red-50 px-3 py-2 text-xs font-semibold text-danger">

@@ -36,7 +36,7 @@ export default async function SiteFooter() {
             <EpassyarMark size={30} tone="reversed" className="shrink-0" />
             <div className="leading-tight">
               <div className="font-wordmark text-[16px] text-white">epassyar</div>
-              <div className="text-[11px]">{name} Smart Tourism · LGU Official</div>
+              <div className="text-[11px]">{name} Smart Tourism</div>
             </div>
           </div>
           {muni?.tagline && (
@@ -76,7 +76,7 @@ export default async function SiteFooter() {
       </div>
 
       <div className="relative border-t border-white/10 py-3 text-center text-[11px] text-[#7D838B]">
-        © {new Date().getFullYear()} LGU {name}{muni?.province ? `, ${muni.province}` : ""} · Accommodations listed are recommendations only and not bookable online.
+        © {new Date().getFullYear()} {name}{muni?.province ? `, ${muni.province}` : ""} · Accommodations listed are recommendations only and not bookable online.
         <span className="mx-2 opacity-40">·</span>Powered by{" "}
         <span className="inline-flex items-center gap-1 align-middle">
           <EpassyarMark size={14} tone="reversed" className="shrink-0" />

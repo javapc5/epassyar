@@ -74,8 +74,8 @@ export default async function AdminDashboard() {
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-extrabold">Tourism Office Dashboard</h1>
-          <p className="text-sm text-ink-600">{shortDate(new Date())} · Municipality of Bagulin</p>
+          <h1 className="font-display text-2xl font-extrabold">Admin Dashboard</h1>
+          <p className="text-sm text-ink-600">{shortDate(new Date())} · Bagulin, La Union</p>
         </div>
         <div className="flex gap-2">
           {paymentReviews > 0 && (

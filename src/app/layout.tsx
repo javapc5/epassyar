@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://epassyar.com"),
   title: "ePassyar · Bagulin, La Union — Smart Tourism",
   description:
-    "ePassyar is the official smart tourism platform of LGU Bagulin, La Union. Plan your visit, book guided tours to waterfalls, heritage caves, hanging bridges and viewdecks.",
+    "ePassyar is the smart tourism platform for Bagulin, La Union. Plan your visit, book guided tours to waterfalls, heritage caves, hanging bridges and viewdecks.",
   other: { "mobile-web-app-capable": "yes" },
 };
 

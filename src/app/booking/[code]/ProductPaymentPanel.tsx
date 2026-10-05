@@ -81,7 +81,7 @@ export default function ProductPaymentPanel({
         )}
 
         <div className="mt-3 border-t border-line pt-2.5 text-center">
-          <div className="font-display text-base font-extrabold">{gcash.name ?? "Bagulin Tourism Office"}</div>
+          <div className="font-display text-base font-extrabold">{gcash.name ?? "ePassyar"}</div>
           <button onClick={copyNumber} className="mt-0.5 inline-flex items-center gap-1.5 font-mono text-sm font-bold text-brand-700">
             {gcash.number ?? "—"} {copied ? <CheckIcon size={14} weight="bold" /> : <CopyIcon size={14} />}
           </button>
@@ -95,7 +95,7 @@ export default function ProductPaymentPanel({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={gcash.qrUrl} alt="GCash QR code" className="mx-auto h-[80vw] max-h-[420px] w-[80vw] max-w-[420px] object-contain" />
             <div className="mt-3 text-center">
-              <div className="font-display text-lg font-extrabold">{gcash.name ?? "Bagulin Tourism Office"}</div>
+              <div className="font-display text-lg font-extrabold">{gcash.name ?? "ePassyar"}</div>
               <div className="font-mono text-base font-bold text-brand-700">{gcash.number}</div>
               <div className="text-sm">Send <b className="text-brand-700">{peso(totalAmount)}</b></div>
             </div>
@@ -131,7 +131,7 @@ export default function ProductPaymentPanel({
 
       <div className="mt-3 flex items-start gap-2 text-[11.5px] leading-relaxed text-ink-600">
         <BankIcon size={15} weight="duotone" className="mt-0.5 shrink-0" />
-        <span>Prefer cash? Pay at the Municipal Treasurer&apos;s Office — mention order <b className="whitespace-nowrap">{orderCode}</b>.</span>
+        <span>Prefer cash? Pay in person at our office — mention order <b className="whitespace-nowrap">{orderCode}</b>.</span>
       </div>
     </div>
   );

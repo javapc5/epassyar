@@ -66,7 +66,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ code: s
         recipientMobile: order.booking.touristMobile,
         recipientType: "tourist",
         template: "PRODUCT_PAYMENT_SUBMITTED",
-        message: `Bagulin Tourism: We received your GCash reference for order ${code}. We'll confirm shortly — you'll get an SMS once verified.`,
+        message: `ePassyar: We received your GCash reference for order ${code}. We'll confirm shortly — you'll get an SMS once verified.`,
       },
     }),
   ]);

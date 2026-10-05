@@ -61,12 +61,12 @@ export default async function ProductOrdersSection({ bookingId }: { bookingId: n
               )}
               {o.status === "payment_review" && (
                 <div className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-[12.5px] text-amber-800">
-                  GCash reference received — the Tourism Office is verifying it. You&apos;ll get an SMS once confirmed.
+                  GCash reference received — our team is verifying it. You&apos;ll get an SMS once confirmed.
                 </div>
               )}
               {(o.status === "paid" || o.status === "ready_for_pickup") && (
                 <div className="mt-3 rounded-lg bg-brand-50 px-3 py-2 text-[12.5px] text-brand-700">
-                  Pick up at the Municipal Tourism Office on your visit day — show your QR pass.
+                  Pick up at our pickup point on your visit day — show your QR pass.
                 </div>
               )}
             </div>

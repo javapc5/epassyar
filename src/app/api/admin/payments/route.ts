@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         prisma.smsLog.create({
           data: {
             bookingId: b.id, recipientMobile: b.touristMobile, recipientType: "tourist", template: "PAYMENT_VERIFIED",
-            message: `Bagulin Tourism: Payment confirmed for ${b.bookingCode}! Your booking is now awaiting Tourism Office approval.`,
+            message: `ePassyar: Payment confirmed for ${b.bookingCode}! Your booking is now awaiting approval.`,
           },
         }),
       ]);
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       prisma.smsLog.create({
         data: {
           bookingId: b.id, recipientMobile: b.touristMobile, recipientType: "tourist", template: "PAYMENT_REJECTED",
-          message: `Bagulin Tourism: We couldn't verify the GCash reference for ${b.bookingCode}. Please check the number and submit again, or contact the Tourism Office.`,
+          message: `ePassyar: We couldn't verify the GCash reference for ${b.bookingCode}. Please check the number and submit again, or contact us.`,
         },
       }),
     ]);
@@ -82,12 +82,12 @@ export async function POST(req: Request) {
         data: { amountPaid: booking.amountPaid + booking.reservationDue, status: "pending_approval" },
       }),
       prisma.bookingStatusLog.create({
-        data: { bookingId: booking.id, fromStatus: booking.status, toStatus: "pending_approval", note: `Cash payment recorded at Treasurer's Office by ${staff.fullName} (OR ${orNumber})` },
+        data: { bookingId: booking.id, fromStatus: booking.status, toStatus: "pending_approval", note: `Cash payment recorded in person by ${staff.fullName} (OR ${orNumber})` },
       }),
       prisma.smsLog.create({
         data: {
           bookingId: booking.id, recipientMobile: booking.touristMobile, recipientType: "tourist", template: "PAYMENT_VERIFIED",
-          message: `Bagulin Tourism: Payment received (OR ${orNumber}) for ${booking.bookingCode}. Awaiting Tourism Office approval.`,
+          message: `ePassyar: Payment received (OR ${orNumber}) for ${booking.bookingCode}. Awaiting approval.`,
         },
       }),
     ]);

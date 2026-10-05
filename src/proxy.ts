@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { AUTH_SECRET } from "@/lib/secrets";
 
 /**
- * Route gate for the Tourism Office admin (Next's "proxy" convention, formerly
+ * Route gate for the staff admin (Next's "proxy" convention, formerly
  * "middleware"). Runs on the edge and verifies the signed session cookie
  * WITHOUT a database call (Web Crypto HMAC — same secret
  * and algorithm the Node side uses in src/lib/auth.ts). Unauthenticated:

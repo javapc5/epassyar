@@ -12,7 +12,7 @@ import { ProductCard } from "@/components/cards";
  * frames pickup around the trip the tourist already has.
  *
  * This is a browse-and-plan prompt, not a checkout — the ordering/payment flow
- * is a separate subsystem. Keep it to a few items: this is a government tourism
+ * is a separate subsystem. Keep it to a few items: this is a local tourism
  * site, so it endorses gently rather than upsells.
  */
 export default async function BookingAddOns({
@@ -41,7 +41,7 @@ export default async function BookingAddOns({
         <h3 className="font-display text-lg font-bold">Take home a taste of Bagulin</h3>
       </div>
       <p className="mt-1 text-[13px] text-ink-600">
-        Local products you can reserve now and pick up at the Tourism Office on <b>{shortDate(visitDate)}</b> — one trip, nothing to carry around.
+        Local products you can reserve now and pick up at our pickup point on <b>{shortDate(visitDate)}</b> — one trip, nothing to carry around.
       </p>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">

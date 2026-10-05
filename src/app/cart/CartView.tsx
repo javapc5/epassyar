@@ -102,7 +102,7 @@ export default function CartView() {
           </div>
           <div className="mt-3 rounded-lg bg-brand-50 px-3 py-2.5 text-[12.5px] leading-relaxed text-ink-700">
             <ShoppingCartSimpleIcon size={14} weight="fill" className="mr-1 inline text-brand-700" />
-            Nothing is charged yet. Continue to your booking to reserve and pay for these items, then pick them up at the Tourism Office on your visit day.
+            Nothing is charged yet. Continue to your booking to reserve and pay for these items, then pick them up at our pickup point on your visit day.
           </div>
           <Link href="/my-booking" className="btn btn-amber mt-4 w-full justify-center">
             Continue to My Booking <ArrowRightIcon size={15} weight="bold" />

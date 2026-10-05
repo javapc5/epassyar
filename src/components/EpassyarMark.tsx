@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 /**
  * ePassyar platform mark — the fixed brand icon for the software itself, as
- * opposed to the per-LGU seal (Municipality.logoUrl) which any municipality
+ * opposed to the per-tenant seal (Municipality.logoUrl) which any operator
  * uploads. This one is baked in and never changes.
  *
  * Drawn as a single coiled road: the outer forest-green turn is the mountain

@@ -23,7 +23,7 @@ export default async function BookingPage({ params }: { params: Promise<{ code: 
   // This page carries tourist PII and the QR pass, so the reference code alone is
   // not enough to open it. Access comes from submitting the booking or clearing
   // the /my-booking check (code + last 4 digits of the mobile on file). Signed-in
-  // Tourism Office staff are let through so they can open a link a tourist sends.
+  // Signed-in staff are let through so they can open a link a tourist sends.
   const [entitled, staff] = await Promise.all([hasBookingAccess(code), getSessionUser()]);
   if (!entitled && !staff) {
     redirect(`/my-booking?code=${encodeURIComponent(code)}&verify=1`);
@@ -120,14 +120,14 @@ export default async function BookingPage({ params }: { params: Promise<{ code: 
           {booking.status === "payment_review" && (
             <div className="mt-6 rounded-card bg-amber-50 p-4 text-sm text-amber-800">
               <SealCheckIcon size={18} weight="fill" className="mr-1 inline" />
-              GCash reference received. The Tourism Office is verifying your payment — you&apos;ll get an SMS once confirmed (usually within office hours).
+              GCash reference received. Our team is verifying your payment — you&apos;ll get an SMS once confirmed (usually within office hours).
             </div>
           )}
 
           {booking.status === "pending_approval" && (
             <div className="mt-6 rounded-card bg-river-100/50 p-4 text-sm text-river-500">
               <SealCheckIcon size={18} weight="fill" className="mr-1 inline" />
-              Reservation fee received. The Tourism Office is reviewing your booking and assigning your guide. You&apos;ll get an SMS once approved.
+              Reservation fee received. Our team is reviewing your booking and assigning your guide. You&apos;ll get an SMS once approved.
             </div>
           )}
 
@@ -146,7 +146,7 @@ export default async function BookingPage({ params }: { params: Promise<{ code: 
                 )}
               </div>
               <div className="mt-1.5 font-display text-sm font-bold tracking-wide text-brand-700">{booking.bookingCode}</div>
-              <div className="mt-1 text-xs text-ink-600">The guide or Tourism Office scans this on arrival. Balance {peso(booking.totalAmount - booking.amountPaid)} payable on-site.</div>
+              <div className="mt-1 text-xs text-ink-600">The guide or staff scans this on arrival. Balance {peso(booking.totalAmount - booking.amountPaid)} payable on-site.</div>
               {booking.status === "checked_in" && (
                 <div className="mx-auto mt-2 flex w-fit items-center gap-1 rounded-full bg-ok/15 px-3 py-1 text-xs font-bold text-ok"><SealCheckIcon size={13} weight="fill" /> Checked in — enjoy your visit!</div>
               )}

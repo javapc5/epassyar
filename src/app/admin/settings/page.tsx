@@ -28,12 +28,12 @@ export default async function AdminSettings() {
       <p className="text-sm text-ink-600">Fee rates, transportation modes, payment account, and booking rules — all changes take effect immediately.</p>
 
       <div className="mt-5 grid max-w-5xl gap-6 lg:grid-cols-2">
-        {/* BRANDING — makes the system deployable to any LGU */}
+        {/* BRANDING — makes the system deployable to any destination */}
         <form action={saveBranding} className="lg:col-span-2">
-          <FormCard title="Municipality branding & information">
-            <div className="flex items-center gap-2 text-brand-700"><PaletteIcon size={20} weight="duotone" /><span className="text-xs font-semibold text-ink-600">This system is multi-LGU ready — logo, name, and contact details here rebrand the whole public site instantly.</span></div>
+          <FormCard title="Site branding & information">
+            <div className="flex items-center gap-2 text-brand-700"><PaletteIcon size={20} weight="duotone" /><span className="text-xs font-semibold text-ink-600">This system is multi-tenant ready — logo, name, and contact details here rebrand the whole public site instantly.</span></div>
             <div className="grid gap-3 sm:grid-cols-3">
-              <Field label="Municipality name">
+              <Field label="Site name">
                 <TextInput name="name" defaultValue={muni?.name ?? ""} required />
               </Field>
               <Field label="Province">
@@ -57,7 +57,7 @@ export default async function AdminSettings() {
             </Field>
             <label className="flex items-center gap-2.5 text-sm font-semibold text-ink-700">
               <input type="checkbox" name="heroLogoEnabled" defaultChecked={muni?.heroLogoEnabled ?? true} className="h-4 w-4 accent-brand-700" />
-              Show the logo as an official seal on the home banner
+              Show the logo as a seal on the home banner
             </label>
             <button className="btn btn-green w-fit">Save branding</button>
           </FormCard>
@@ -147,7 +147,7 @@ export default async function AdminSettings() {
         {/* FEES */}
         <form action={saveFees}>
           <FormCard title="Fee rates">
-            <div className="flex items-center gap-2 text-brand-700"><ReceiptIcon size={20} weight="duotone" /><span className="text-xs font-semibold text-ink-600">Set per municipal ordinance — used by the pricing engine on every quote.</span></div>
+            <div className="flex items-center gap-2 text-brand-700"><ReceiptIcon size={20} weight="duotone" /><span className="text-xs font-semibold text-ink-600">Set your fee rates — used by the pricing engine on every quote.</span></div>
             <Field label="Environmental fee (₱ per pax)">
               <TextInput type="number" name="environmental" min={0} step="0.01" defaultValue={fee("ENVIRONMENTAL")} />
             </Field>
@@ -166,7 +166,7 @@ export default async function AdminSettings() {
           <FormCard title="GCash payment account">
             <div className="flex items-center gap-2 text-brand-700"><DeviceMobileIcon size={20} weight="duotone" /><span className="text-xs font-semibold text-ink-600">Tourists send the reservation fee here, then submit their GCash reference number for verification.</span></div>
             <Field label="Account name (shown to tourists)">
-              <TextInput name="gcashName" defaultValue={muni?.gcashName ?? ""} placeholder="e.g. Bagulin Tourism Office" />
+              <TextInput name="gcashName" defaultValue={muni?.gcashName ?? ""} placeholder="e.g. ePassyar Bagulin" />
             </Field>
             <Field label="GCash number">
               <TextInput name="gcashNumber" defaultValue={muni?.gcashNumber ?? ""} placeholder="09xx xxx xxxx" />
