@@ -1,16 +1,30 @@
 import path from "path";
-import { v2 as cloudinary } from "cloudinary";
+import { prisma } from "@/lib/prisma";
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+/**
+ * Database-backed upload store — no Cloudinary / S3, nothing leaves the app's own
+ * Postgres database. The file bytes are written to the `Media` table and served
+ * back through the route `GET /api/media/<id>` (the id is an unguessable cuid).
+ * This keeps uploaded photos persistent on Vercel, whose serverless filesystem
+ * does not survive between requests or redeploys.
+ *
+ * `src/lib/format.ts#isMediaUrl` recognises the `/api/media/` shape (plus legacy
+ * `/uploads/` paths and old Cloudinary https:// URLs so existing rows still load).
+ */
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
 const MAX_VIDEO_BYTES = 40 * 1024 * 1024; // 40 MB — hero banner clips
 const ALLOWED_IMAGE = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 const ALLOWED_VIDEO = new Set([".mp4", ".webm"]);
+const EXT_MIME: Record<string, string> = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+};
 
 export async function saveUpload(file: File | null | undefined): Promise<string | null> {
   if (!file || file.size === 0) return null;
@@ -27,16 +41,12 @@ export async function saveUpload(file: File | null | undefined): Promise<string 
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
-  const resourceType = isVideo ? "video" : "image";
+  const mimeType = file.type || EXT_MIME[ext] || "application/octet-stream";
 
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder: "epassyar", resource_type: resourceType },
-      (error, result) => {
-        if (error || !result) return reject(error ?? new Error("Upload failed."));
-        resolve(result.secure_url);
-      },
-    );
-    stream.end(bytes);
+  const media = await prisma.media.create({
+    data: { mimeType, data: bytes },
+    select: { id: true },
   });
+
+  return `/api/media/${media.id}`;
 }

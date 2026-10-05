@@ -485,3 +485,14 @@ model ProductOrderStatusLog {
 
   order ProductOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
+
+// Uploaded images/videos stored directly in the database (no Cloudinary / object
+// store), so files persist regardless of Vercel's ephemeral filesystem. Served as
+// bytes by GET /api/media/[id]. The id is an unguessable cuid, matching the
+// privacy level of the previous Cloudinary unguessable URLs.
+model Media {
+  id        String   @id @default(cuid())
+  mimeType  String
+  data      Bytes
+  createdAt DateTime @default(now())
+}
