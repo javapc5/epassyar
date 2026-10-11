@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { DeviceMobileIcon, CopyIcon, BankIcon, CheckIcon, MagnifyingGlassPlusIcon, XIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
+import { CopyIcon, BankIcon, CheckIcon, MagnifyingGlassPlusIcon, XIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
 import { peso } from "@/lib/format";
+import { downloadQrWithCaption } from "./downloadQr";
 
 type Gcash = { name: string | null; number: string | null; qrUrl: string | null };
 
@@ -25,6 +26,7 @@ export default function PayPanel({
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [zoomed, setZoomed] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   async function submit() {
     setError("");
@@ -47,25 +49,48 @@ export default function PayPanel({
     setTimeout(() => setCopied(false), 1500);
   }
 
+  async function downloadQr() {
+    if (!gcash.qrUrl) return;
+    setDownloading(true);
+    try {
+      await downloadQrWithCaption(gcash.qrUrl, `gcash-${code}.png`, [
+        { text: `Send ${peso(reservationDue)}`, big: true },
+        { text: [gcash.name, gcash.number].filter(Boolean).join(" · ") || "GCash" },
+        { text: `Booking ${code}` },
+      ]);
+    } finally {
+      setDownloading(false);
+    }
+  }
+
   const hoursLeft = expiresAt ? Math.max(0, Math.round((new Date(expiresAt).getTime() - Date.now()) / 3600000)) : null;
 
   return (
-    <div className="mt-6 rounded-card border-2 border-cta-500 bg-cta-500/10 p-5">
-      <div className="font-display text-lg font-bold">Pay reservation fee via GCash</div>
+    <div className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
+      <div className="eyebrow">Reservation fee</div>
       <p className="mt-1 text-sm text-ink-600">
-        Send <b className="text-brand-700">{peso(reservationDue)}</b> to the account below, then enter your GCash
-        reference number so our team can verify it.
+        Pay via GCash to hold your slot, then enter your GCash reference number so our team can verify it.
         {hoursLeft !== null && <> This reservation expires in about <b>{hoursLeft} hour{hoursLeft === 1 ? "" : "s"}</b>.</>}
       </p>
 
-      {/* Step 1 — send money */}
-      <div className="mt-4 rounded-card border border-line bg-white p-4">
-        <div className="text-center text-[11px] font-extrabold uppercase tracking-wide text-brand-700">Step 1 — Scan &amp; send via GCash</div>
+      {/* Amount — unmissable, because a static GCash QR cannot carry it */}
+      <div className="mt-3 rounded-xl bg-brand-900 px-5 py-4 text-center text-white">
+        <div className="text-[11px] font-semibold uppercase tracking-widest text-brand-100">Send exactly</div>
+        <div className="font-display text-[2.6rem] font-extrabold leading-none">{peso(reservationDue)}</div>
+        {(gcash.name || gcash.number) && (
+          <div className="mt-1.5 text-sm text-brand-100">
+            to {gcash.name ?? "ePassyar"}{gcash.number ? ` · ${gcash.number}` : ""}
+          </div>
+        )}
+      </div>
+
+      {/* Step 1 — scan & send */}
+      <div className="mt-5">
+        <StepLabel n={1} text="Scan & send via GCash" />
 
         {gcash.qrUrl ? (
           <div className="mt-3 flex flex-col items-center">
-            <button type="button" onClick={() => setZoomed(true)} className="relative block w-full max-w-[300px]" aria-label="Enlarge QR code">
-              {/* Large square QR with a generous white quiet-zone — needed for reliable scanning */}
+            <button type="button" onClick={() => setZoomed(true)} className="relative block w-full max-w-[280px]" aria-label="Enlarge QR code">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={gcash.qrUrl}
@@ -76,55 +101,37 @@ export default function PayPanel({
                 <MagnifyingGlassPlusIcon size={13} weight="bold" /> Tap to enlarge
               </span>
             </button>
-            <a
-              href={gcash.qrUrl}
-              download={`gcash-qr-${code}.png`}
-              className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-700 hover:underline"
+            <p className="mt-2 text-center text-xs text-ink-600">
+              After scanning, type <b>{peso(reservationDue)}</b> as the amount in your GCash app.
+            </p>
+            <button
+              type="button"
+              onClick={downloadQr}
+              disabled={downloading}
+              className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-700 hover:underline disabled:opacity-60"
             >
-              <DownloadSimpleIcon size={14} /> Save QR to scan from another phone
-            </a>
+              <DownloadSimpleIcon size={14} /> {downloading ? "Preparing…" : "Save QR (amount + reference included)"}
+            </button>
           </div>
         ) : (
-          <div className="mx-auto mt-3 flex h-40 w-40 items-center justify-center rounded-lg bg-brand-100 text-brand-700">
-            <DeviceMobileIcon size={48} weight="duotone" />
-          </div>
+          <p className="mt-2 text-sm text-ink-600">
+            Send to <b>{gcash.name ?? "ePassyar"}</b>{gcash.number ? <> · <span className="font-mono">{gcash.number}</span></> : null} in your GCash app.
+          </p>
         )}
 
-        <div className="mt-4 border-t border-line pt-3 text-center">
-          <div className="font-display text-lg font-extrabold">{gcash.name ?? "ePassyar"}</div>
-          <button onClick={copyNumber} className="mt-0.5 inline-flex items-center gap-1.5 font-mono text-base font-bold text-brand-700">
+        <div className="mt-3 flex items-center justify-center gap-2 text-center">
+          <button onClick={copyNumber} className="inline-flex items-center gap-1.5 font-mono text-base font-bold text-brand-700">
             {gcash.number ?? "—"} {copied ? <CheckIcon size={15} weight="bold" /> : <CopyIcon size={15} />}
           </button>
-          <div className="mt-1 text-sm text-ink-900">Amount: <b className="text-brand-700">{peso(reservationDue)}</b></div>
-          <div className="mt-0.5 text-xs text-ink-600">Keep your receipt — you&apos;ll need the reference number below.</div>
         </div>
       </div>
 
-      {/* Fullscreen QR — maximum size for scanning */}
-      {zoomed && gcash.qrUrl && (
-        <div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/80 p-4"
-          onClick={() => setZoomed(false)}
-        >
-          <div className="rounded-2xl bg-white p-5" onClick={(e) => e.stopPropagation()}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={gcash.qrUrl} alt="GCash QR code" className="mx-auto h-[80vw] max-h-[420px] w-[80vw] max-w-[420px] object-contain" />
-            <div className="mt-3 text-center">
-              <div className="font-display text-lg font-extrabold">{gcash.name ?? "ePassyar"}</div>
-              <div className="font-mono text-base font-bold text-brand-700">{gcash.number}</div>
-              <div className="text-sm">Send <b className="text-brand-700">{peso(reservationDue)}</b></div>
-            </div>
-          </div>
-          <button onClick={() => setZoomed(false)} className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink-900">
-            <XIcon size={16} weight="bold" /> Close
-          </button>
-        </div>
-      )}
+      <div className="my-5 border-t border-line" />
 
       {/* Step 2 — submit reference */}
-      <div className="mt-3 rounded-card border border-line bg-white p-4">
-        <div className="text-[11px] font-extrabold uppercase tracking-wide text-brand-700">Step 2 — Submit your reference number</div>
-        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+      <div>
+        <StepLabel n={2} text="Enter your GCash reference number" />
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
           <input
             value={refNo}
             onChange={(e) => setRefNo(e.target.value)}
@@ -145,10 +152,37 @@ export default function PayPanel({
         </button>
       </div>
 
-      <div className="mt-3 flex items-start gap-2 text-[12px] leading-relaxed text-ink-600">
+      <div className="mt-4 flex items-start gap-2 text-[12px] leading-relaxed text-ink-600">
         <BankIcon size={16} weight="duotone" className="mt-0.5 shrink-0" />
         <span>Prefer cash? You can also pay the reservation fee in person at our office — mention your booking code <b className="whitespace-nowrap">{code}</b> and the cashier will record it.</span>
       </div>
+
+      {/* Fullscreen QR — maximum size for scanning */}
+      {zoomed && gcash.qrUrl && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/80 p-4" onClick={() => setZoomed(false)}>
+          <div className="rounded-2xl bg-white p-5" onClick={(e) => e.stopPropagation()}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={gcash.qrUrl} alt="GCash QR code" className="mx-auto h-[80vw] max-h-[420px] w-[80vw] max-w-[420px] object-contain" />
+            <div className="mt-3 text-center">
+              <div className="font-display text-lg font-extrabold">{gcash.name ?? "ePassyar"}</div>
+              <div className="font-mono text-base font-bold text-brand-700">{gcash.number}</div>
+              <div className="text-sm">Send <b className="text-brand-700">{peso(reservationDue)}</b></div>
+            </div>
+          </div>
+          <button onClick={() => setZoomed(false)} className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink-900">
+            <XIcon size={16} weight="bold" /> Close
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StepLabel({ n, text }: { n: number; text: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-100 text-xs font-extrabold text-brand-700">{n}</span>
+      <span className="text-sm font-bold text-ink-900">{text}</span>
     </div>
   );
 }
