@@ -20,7 +20,7 @@ export default async function ProductOrdersSection({ bookingId }: { bookingId: n
       include: { items: true },
       orderBy: { createdAt: "desc" },
     }),
-    prisma.municipality.findUnique({ where: { id: 1 } }),
+    prisma.municipality.findFirst(),
   ]);
 
   if (orders.length === 0) return null;

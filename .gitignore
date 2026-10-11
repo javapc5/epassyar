@@ -28,6 +28,12 @@ public/uploads/
 /page-checks/
 /mobile-screenshots/
 
+# credentials — never commit
+ACCOUNTS.md
+
+# vercel cli
+.vercel/
+
 # misc
 .DS_Store
 docs/screenshots/*.tmp

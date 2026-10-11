@@ -13,7 +13,7 @@ const NAV = [
 ];
 
 export default async function SiteHeader() {
-  const muni = await prisma.municipality.findUnique({ where: { id: 1 } });
+  const muni = await prisma.municipality.findFirst();
   const name = muni?.name ?? "Bagulin";
 
   return (

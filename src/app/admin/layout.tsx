@@ -34,7 +34,7 @@ const NAV = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [user, muni] = await Promise.all([requireUser(), prisma.municipality.findUnique({ where: { id: 1 } })]);
+  const [user, muni] = await Promise.all([requireUser(), prisma.municipality.findFirst()]);
   const logo = isMediaUrl(muni?.logoUrl) ? muni!.logoUrl : null;
   return (
     <div className="min-h-screen bg-bg">

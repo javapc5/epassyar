@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; e?: string }> }) {
   const { next, e } = await searchParams;
-  const [user, muni] = await Promise.all([getSessionUser(), prisma.municipality.findUnique({ where: { id: 1 } })]);
+  const [user, muni] = await Promise.all([getSessionUser(), prisma.municipality.findFirst()]);
   if (user) redirect("/admin");
   const name = muni?.name ?? "Bagulin";
   const logo = isMediaUrl(muni?.logoUrl) ? muni!.logoUrl : null;

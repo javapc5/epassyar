@@ -40,7 +40,7 @@ export default async function BookingPage({ params }: { params: Promise<{ code: 
         qrPass: true,
       },
     }),
-    prisma.municipality.findUnique({ where: { id: 1 } }),
+    prisma.municipality.findFirst(),
   ]);
   if (!booking) notFound();
 

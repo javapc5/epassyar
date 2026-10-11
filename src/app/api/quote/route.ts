@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { quoteCustomItinerary } from "@/lib/pricing";
+import { getMunicipalityId } from "@/lib/prisma";
 import { remainingCapacity } from "@/lib/availability";
 import { rateLimit, clientIpFrom } from "@/lib/rate-limit";
 
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
   }
 
   const quote = await quoteCustomItinerary({
-    municipalityId: 1,
+    municipalityId: await getMunicipalityId(),
     destinationIds,
     adults,
     children,

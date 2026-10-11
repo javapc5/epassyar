@@ -39,7 +39,7 @@ export default async function HomePage() {
       orderBy: { id: "asc" },
     }),
     prisma.galleryImage.findMany({ where: { entityType: "hero" }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], take: 10 }),
-    prisma.municipality.findUnique({ where: { id: 1 } }),
+    prisma.municipality.findFirst(),
   ]);
 
   const heroSlides = heroImages.map((h) => ({

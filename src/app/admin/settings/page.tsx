@@ -1,5 +1,5 @@
 import { DeviceMobileIcon, ReceiptIcon, VanIcon, TimerIcon, PaletteIcon, ImagesIcon, FilmSlateIcon, SlidersIcon, InfoIcon, HandWavingIcon } from "@phosphor-icons/react/dist/ssr";
-import { prisma } from "@/lib/prisma";
+import { prisma, getMunicipalityId } from "@/lib/prisma";
 import { peso } from "@/lib/format";
 import { Field, TextInput, TextArea, Select, FormCard } from "@/components/admin/FormBits";
 import ImageCropUpload from "@/components/admin/ImageCropUpload";
@@ -14,10 +14,11 @@ export default async function AdminSettings() {
   // front-desk or guide account cannot redirect where tourists send money.
   await requireRole(MANAGER_ROLES);
 
+  const municipalityId = await getMunicipalityId();
   const [muni, fees, routes] = await Promise.all([
-    prisma.municipality.findUnique({ where: { id: 1 } }),
-    prisma.feeSetting.findMany({ where: { municipalityId: 1 } }),
-    prisma.transportRoute.findMany({ where: { municipalityId: 1 }, orderBy: { id: "asc" } }),
+    prisma.municipality.findUnique({ where: { id: municipalityId } }),
+    prisma.feeSetting.findMany({ where: { municipalityId } }),
+    prisma.transportRoute.findMany({ where: { municipalityId }, orderBy: { id: "asc" } }),
   ]);
 
   const fee = (code: string) => fees.find((f) => f.feeCode === code)?.amount ?? 0;
